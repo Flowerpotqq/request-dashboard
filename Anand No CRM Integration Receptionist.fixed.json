@@ -1,0 +1,2310 @@
+{
+  "name": "Anand No CRM Integration Receptionist",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "1261c96d-947f-40f9-8182-9588bc1afb1c",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -448,
+        960
+      ],
+      "id": "b977a616-b448-44dc-a186-c807d17d74f7",
+      "name": "Webhook",
+      "webhookId": "1261c96d-947f-40f9-8182-9588bc1afb1c"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "=check_availability_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "05c885a3-ac45-4505-9cb7-dc11fb6ead45"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "db025a4f-2030-4878-98dc-71e717540565",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "book_appointment_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3ac9f1ea-c105-484f-8e35-ff20ecdd97b3",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "reschedule_appointment_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f4b7d373-d277-44da-ad09-6e4ed6714468",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "cancel_appointment_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "861f0d56-e911-47d1-92b9-95743ff0f29d",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "lookup_appointment_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8ac63fdc-bf6c-483a-90ef-b6b56a8d3d08",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "transfer_call",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "85ef61ed-38db-43a9-aafb-b5082643217f",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "end_call",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f70f9466-4a1a-4778-a0b5-848167573a1b",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "get_available_slots_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "edit-switch-cond-001",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "edit_appointment_cal",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d7d23388-3339-4d00-b53a-3574199274bd",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "send_otp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "669705b8-5893-4d41-b333-fb7fae819fbc",
+                    "leftValue": "={{ $json.body && $json.body.name ? $json.body.name : ($json.function_name || $json.name || $json.tool_name) }}",
+                    "rightValue": "verify_otp",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        816
+      ],
+      "id": "06d3204b-5c33-406d-94fb-92dd07d186e5",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "9140d079-50ad-4ae8-b7b3-a4b079f33c64",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Your reschedule request has been submitted for manual review.\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        944,
+        576
+      ],
+      "id": "f16ffab4-d078-4c40-b803-e3f262d8b8b6",
+      "name": "Respond to Webhook2"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        768
+      ],
+      "id": "9ca564cb-ff94-4150-992d-3a020ec22acc",
+      "name": "Respond to Webhook4"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  name: \"end_call\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        960
+      ],
+      "id": "3dd4b56b-5d1f-40d0-9e8e-63e74693ab37",
+      "name": "end_call"
+    },
+    {
+      "parameters": {
+        "jsCode": "return {\n  name: \"transfer_call\",\n  phone_number: \"+16479260039\"\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1152
+      ],
+      "id": "40e607eb-076c-4888-bb52-55d9a4059561",
+      "name": "Transfer_call"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"action\": \"end_call\"\n}",
+        "options": {}
+      },
+      "id": "c7bfe368-8298-47e2-bb24-974ccfd0e7a9",
+      "name": "Respond End Call",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        224,
+        960
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "dd8077c4-122d-43fa-adc9-a4079a0d52cd",
+      "name": "Respond Transfer Call",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        224,
+        1152
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n// ============================================\n// CHECK AVAILABILITY - Code in JavaScript (Switch Output 0)\n// Timezone: America/Toronto (UTC-4 EDT / UTC-5 EST)\n// ============================================\n\n// ---- CLINIC HOURS (in LOCAL Toronto time) ----\nconst CLINIC_HOURS = {\n  1: { open: 9, close: 19 }, // Monday\n  2: { open: 9, close: 17 }, // Tuesday\n  3: { open: 9, close: 17 }, // Wednesday\n  4: { open: 9, close: 17 }, // Thursday\n  5: null,                   // Friday CLOSED\n  6: { open: 9, close: 15 }, // Saturday\n  0: null                    // Sunday CLOSED\n};\n\nconst SLOT_DURATION_DEFAULT = 60; // minutes\n\n// ---- HELPER: Get Toronto local hour/day from a UTC Date ----\nfunction toTorontoComponents(date) {\n  const parts = new Intl.DateTimeFormat(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    year: \"numeric\",\n    month: \"2-digit\",\n    day: \"2-digit\",\n    hour: \"2-digit\",\n    minute: \"2-digit\",\n    second: \"2-digit\",\n    hour12: false\n  }).formatToParts(date);\n\n  const get = (type) => parseInt(parts.find(p => p.type === type).value);\n  return {\n    year: get(\"year\"),\n    month: get(\"month\"),\n    day: get(\"day\"),\n    hour: get(\"hour\"),\n    minute: get(\"minute\"),\n    second: get(\"second\")\n  };\n}\n\n// Get the JS weekday (0=Sun) for a date in Toronto timezone\nfunction torontoDayOfWeek(date) {\n  const str = date.toLocaleDateString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"short\"\n  });\n  const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };\n  return map[str];\n}\n\n// Build a UTC Date that represents a specific Toronto local time\nfunction torontoToUTC(year, month, day, hour, minute) {\n  const rough = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));\n  const comps = toTorontoComponents(rough);\n  const diffHours = comps.hour - hour + (comps.day !== day ? (comps.day > day ? 24 : -24) : 0);\n  const adjusted = new Date(rough.getTime() - diffHours * 3600000);\n  const verify = toTorontoComponents(adjusted);\n  const minDiff = verify.minute - minute;\n  return new Date(adjusted.getTime() - minDiff * 60000);\n}\n\n// ---- REQUEST DATA ----\nconst w = $('Webhook').first().json;\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\nconst duration = parseInt($('classify reason').first().json.duration_minutes) || SLOT_DURATION_DEFAULT;\n\n// Parse the requested datetime\nlet requestedDT;\nconst raw = webhookData.requested_datetime;\nif (raw) {\n  if (raw.includes(\"+\") || raw.includes(\"Z\") || /T\\d{2}:\\d{2}:\\d{2}-\\d{2}/.test(raw)) {\n    requestedDT = new Date(raw);\n  } else {\n    const match = raw.match(/(\\d{4})-(\\d{2})-(\\d{2})(?:T(\\d{2}):(\\d{2}))?/);\n    if (match) {\n      const [, yr, mo, dy, hr, mn] = match;\n      requestedDT = torontoToUTC(\n        parseInt(yr), parseInt(mo), parseInt(dy),\n        parseInt(hr || \"9\"), parseInt(mn || \"0\")\n      );\n    } else {\n      requestedDT = new Date(raw + \"-04:00\");\n    }\n  }\n} else {\n  requestedDT = new Date();\n}\n\n// ---- EXISTING BOOKINGS (from Google Calendar — already in UTC) ----\nconst bookedSlots = $input.all()\n  .filter(e => e.json.start && e.json.end)\n  .map(e => ({\n    start: new Date(e.json.start.dateTime || e.json.start.date),\n    end: new Date(e.json.end.dateTime || e.json.end.date)\n  }));\n\n// ---- CHECK SLOT CONFLICT ----\nfunction slotFree(startUTC, endUTC) {\n  for (const b of bookedSlots) {\n    if (startUTC < b.end && endUTC > b.start) return false;\n  }\n  return true;\n}\n\n// ---- CHECK CLINIC HOURS (using Toronto local time) ----\nfunction withinClinicHours(startUTC, endUTC) {\n  const dayOfWeek = torontoDayOfWeek(startUTC);\n  const hours = CLINIC_HOURS[dayOfWeek];\n  if (!hours) return false;\n\n  const startLocal = toTorontoComponents(startUTC);\n  const endLocal = toTorontoComponents(endUTC);\n\n  const startMinutes = startLocal.hour * 60 + startLocal.minute;\n  const endMinutes = endLocal.hour * 60 + endLocal.minute;\n\n  return (\n    startMinutes >= hours.open * 60 &&\n    endMinutes <= hours.close * 60 &&\n    startLocal.day === endLocal.day\n  );\n}\n\n// ---- FORMAT FOR VOICE RESPONSE ----\nfunction formatSlot(dateUTC) {\n  return dateUTC.toLocaleString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"long\",\n    month: \"long\",\n    day: \"numeric\",\n    hour: \"numeric\",\n    minute: \"2-digit\",\n    hour12: true\n  });\n}\n\n// ---- FIND 2-3 ALTERNATIVE SLOTS ----\n// Steps through the day by duration increments so offered slots never overlap\nfunction findAlternatives(fromUTC) {\n  const options = [];\n  const fromLocal = toTorontoComponents(fromUTC);\n\n  for (let dayOffset = 0; dayOffset < 14 && options.length < 3; dayOffset++) {\n    const currentDate = new Date(Date.UTC(fromLocal.year, fromLocal.month - 1, fromLocal.day + dayOffset));\n    const comps = toTorontoComponents(currentDate);\n    const realYear = comps.year;\n    const realMonth = comps.month;\n    const realDay = comps.day;\n\n    const testDate = torontoToUTC(realYear, realMonth, realDay, 9, 0);\n    const dayOfWeek = torontoDayOfWeek(testDate);\n    const hours = CLINIC_HOURS[dayOfWeek];\n    if (!hours) continue;\n\n    const openMinutes = hours.open * 60;\n    const closeMinutes = hours.close * 60;\n\n    // Step through day by duration so slots don't overlap\n    for (let minuteOfDay = openMinutes; minuteOfDay + duration <= closeMinutes && options.length < 3; minuteOfDay += duration) {\n      const h = Math.floor(minuteOfDay / 60);\n      const m = minuteOfDay % 60;\n\n      const slotStart = torontoToUTC(realYear, realMonth, realDay, h, m);\n      const slotEnd = new Date(slotStart.getTime() + duration * 60000);\n\n      if (slotStart.getTime() <= fromUTC.getTime()) continue;\n      if (slotStart.getTime() < Date.now()) continue;\n\n      if (withinClinicHours(slotStart, slotEnd) && slotFree(slotStart, slotEnd)) {\n        options.push({\n          datetime: slotStart.toISOString(),\n          label: formatSlot(slotStart)\n        });\n      }\n    }\n  }\n\n  return options;\n}\n\n// ---- CHECK THE REQUESTED SLOT ----\nconst requestedEnd = new Date(requestedDT.getTime() + duration * 60000);\n\nif (withinClinicHours(requestedDT, requestedEnd) && slotFree(requestedDT, requestedEnd)) {\n  return [{\n    json: {\n      available: true,\n      requested_datetime: requestedDT.toISOString(),\n      requested_label: formatSlot(requestedDT),\n      duration_minutes: duration,\n      message: \"That time is available.\"\n    }\n  }];\n}\n\n// ---- OUTSIDE OFFICE HOURS — TELL CALLER EXPLICITLY ----\nif (!withinClinicHours(requestedDT, requestedEnd)) {\n  const alternatives = findAlternatives(requestedDT);\n  let message;\n  if (alternatives.length > 0) {\n    const labels = alternatives.map(a => a.label);\n    if (labels.length === 1) {\n      message = `That's outside our office hours. The nearest opening I have is ${labels[0]}.`;\n    } else if (labels.length === 2) {\n      message = `That's outside our office hours. I can offer ${labels[0]} or ${labels[1]}.`;\n    } else {\n      message = `That's outside our office hours. I can do ${labels[0]}, ${labels[1]}, or ${labels[2]} — which works best?`;\n    }\n  } else {\n    message = \"That's outside our office hours, and I'm not finding any openings in the next two weeks. Let me connect you with the team.\";\n  }\n  return [{\n    json: {\n      available: false,\n      outside_hours: true,\n      requested_datetime: requestedDT.toISOString(),\n      alternatives: alternatives,\n      message: message\n    }\n  }];\n}\n\n// ---- REQUESTED SLOT NOT AVAILABLE (booked) — FIND ALTERNATIVES ----\nconst alternatives = findAlternatives(requestedDT);\n\nlet message;\nif (alternatives.length > 0) {\n  const labels = alternatives.map(a => a.label);\n  if (labels.length === 1) {\n    message = `That time isn't available. The nearest opening I have is ${labels[0]}.`;\n  } else if (labels.length === 2) {\n    message = `That time isn't available. I can offer ${labels[0]} or ${labels[1]}.`;\n  } else {\n    message = `That time isn't available. I can do ${labels[0]}, ${labels[1]}, or ${labels[2]} — which works best?`;\n  }\n} else {\n  message = \"I'm not finding any openings in the next two weeks. Let me connect you with the team.\";\n}\n\nreturn [{\n  json: {\n    available: false,\n    requested_datetime: requestedDT.toISOString(),\n    alternatives: alternatives,\n    message: message\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ],
+      "id": "b1a818a4-cf7a-42d5-9674-35caf417b0d4",
+      "name": "Finder for time slots"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\nconst w = $('Webhook').first().json;\nconst params = normalizeRetellKeys(extractRetellParams(w));\n\n// Duration based on reason\nfunction getDuration(reason) {\n  const r = (reason || \"\").toLowerCase();\n  if (r.includes(\"root canal\")) return 120;\n  if (r.includes(\"crown\")) return 90;\n  if (r.includes(\"extraction\")) return 90;\n  return 60;\n}\n\nconst reason = (params.reason || \"General appointment\").trim();\nconst duration = getDuration(reason);\n\n// Timezone helper\nfunction toTorontoComponents(date) {\n  const parts = new Intl.DateTimeFormat(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    year: \"numeric\", month: \"2-digit\", day: \"2-digit\",\n    hour: \"2-digit\", minute: \"2-digit\", second: \"2-digit\",\n    hour12: false\n  }).formatToParts(date);\n  const get = (type) => parseInt(parts.find(p => p.type === type).value);\n  return { year: get(\"year\"), month: get(\"month\"), day: get(\"day\"), hour: get(\"hour\"), minute: get(\"minute\") };\n}\n\nfunction torontoToUTC(year, month, day, hour, minute) {\n  const rough = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));\n  const comps = toTorontoComponents(rough);\n  const diffHours = comps.hour - hour + (comps.day !== day ? (comps.day > day ? 24 : -24) : 0);\n  const adjusted = new Date(rough.getTime() - diffHours * 3600000);\n  const verify = toTorontoComponents(adjusted);\n  const minDiff = verify.minute - minute;\n  return new Date(adjusted.getTime() - minDiff * 60000);\n}\n\nconst raw = (params.appointment_datetime || \"\").trim();\nlet start, end;\n\nif (raw) {\n  const match = raw.match(/(\\d{4})-(\\d{2})-(\\d{2})(?:T(\\d{2}):(\\d{2}))?/);\n  if (match) {\n    const [, yr, mo, dy, hr, mn] = match;\n    start = torontoToUTC(parseInt(yr), parseInt(mo), parseInt(dy), parseInt(hr || \"9\"), parseInt(mn || \"0\"));\n    end = new Date(start.getTime() + duration * 60000);\n  }\n}\n\nreturn [{\n  json: {\n    first_name: params.first_name || \"\",\n    last_name: params.last_name || \"\",\n    full_name: (params.first_name || \"\") + \" \" + (params.last_name || \"\"),\n    email: params.email || \"\",\n    phone: params.phone || \"\",\n    reason: reason,\n    duration_minutes: duration,\n    appointment_datetime: start ? start.toISOString() : \"\",\n    appointment_end: end ? end.toISOString() : \"\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        192
+      ],
+      "id": "2cbd164b-5cd4-4c88-aea6-b9df46c4410c",
+      "name": "Process info"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $now.toISO().split('.')[0] + 'Z' }}",
+        "timeMax": "={{ $now.plus(180, 'days').toISO().split('.')[0] + 'Z' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        576
+      ],
+      "id": "6ca75bf2-8ecd-42cb-b744-65c0a868b94f",
+      "name": "Rescheduling",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n// ============================================\n// RESCHEDULE APPOINTMENT - Code in JavaScript2 (Switch Output 2)\n// Flow: Webhook → Switch → Get many events1 → [THIS CODE] → Update an event1 → Respond to Webhook2\n// ============================================\n\n// ---- CLINIC HOURS (Toronto local time) ----\nconst CLINIC_HOURS = {\n  1: { open: 9, close: 19 }, // Monday\n  2: { open: 9, close: 17 }, // Tuesday\n  3: { open: 9, close: 17 }, // Wednesday\n  4: { open: 9, close: 17 }, // Thursday\n  5: null,                   // Friday CLOSED\n  6: { open: 9, close: 15 }, // Saturday\n  0: null                    // Sunday CLOSED\n};\n// ---- DURATION BASED ON REASON ----\nfunction getDuration(reason) {\n  const r = (reason || \"\").toLowerCase().trim();\n  if (r.includes(\"root canal\") || r.includes(\"endodontic\")) return 120;\n  if (r.includes(\"crown\") || r.includes(\"implant\") || r.includes(\"veneer\") || r.includes(\"bridge\")) return 90;\n  if (r.includes(\"extraction\") || r.includes(\"wisdom\") || r.includes(\"tooth removal\")) return 90;\n  if (r.includes(\"filling\") || r.includes(\"cavity\") || r.includes(\"broken filling\")) return 60;\n  if (r.includes(\"cleaning\") || r.includes(\"checkup\") || r.includes(\"hygiene\") || r.includes(\"routine\") || r.includes(\"exam\")) return 60;\n  if (r.includes(\"whitening\")) return 60;\n  if (r.includes(\"sensitivity\") || r.includes(\"pain\") || r.includes(\"toothache\") || r.includes(\"chipped\") || r.includes(\"sore\")) return 60;\n  return 60;\n}\n\n// ---- TIMEZONE HELPERS ----\nfunction toTorontoComponents(date) {\n  const parts = new Intl.DateTimeFormat(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    year: \"numeric\",\n    month: \"2-digit\",\n    day: \"2-digit\",\n    hour: \"2-digit\",\n    minute: \"2-digit\",\n    second: \"2-digit\",\n    hour12: false\n  }).formatToParts(date);\n  const get = (type) => parseInt(parts.find(p => p.type === type).value);\n  return {\n    year: get(\"year\"),\n    month: get(\"month\"),\n    day: get(\"day\"),\n    hour: get(\"hour\"),\n    minute: get(\"minute\"),\n    second: get(\"second\")\n  };\n}\n\nfunction torontoDayOfWeek(date) {\n  const str = date.toLocaleDateString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"short\"\n  });\n  const map = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };\n  return map[str];\n}\n\nfunction torontoToUTC(year, month, day, hour, minute) {\n  const rough = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));\n  const comps = toTorontoComponents(rough);\n  const diffHours = comps.hour - hour + (comps.day !== day ? (comps.day > day ? 24 : -24) : 0);\n  const adjusted = new Date(rough.getTime() - diffHours * 3600000);\n  const verify = toTorontoComponents(adjusted);\n  const minDiff = verify.minute - minute;\n  return new Date(adjusted.getTime() - minDiff * 60000);\n}\n\nfunction parseTorontoDatetime(raw) {\n  if (!raw) return null;\n  if (raw.includes(\"Z\") || /[+-]\\d{2}:\\d{2}$/.test(raw)) {\n    return new Date(raw);\n  }\n  const match = raw.match(/(\\d{4})-(\\d{2})-(\\d{2})(?:T(\\d{2}):(\\d{2}))?/);\n  if (match) {\n    const [, yr, mo, dy, hr, mn] = match;\n    return torontoToUTC(parseInt(yr), parseInt(mo), parseInt(dy), parseInt(hr || \"10\"), parseInt(mn || \"0\"));\n  }\n  return new Date(raw + \"-04:00\");\n}\n\nfunction formatSlot(dateUTC) {\n  return dateUTC.toLocaleString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"long\",\n    month: \"long\",\n    day: \"numeric\",\n    hour: \"numeric\",\n    minute: \"2-digit\",\n    hour12: true\n  });\n}\n\n// ---- EXTRACT REASON ----\nfunction extractReasonFromDescription(description) {\n  const match = (description || \"\").match(/Reason:\\s*(.+)/i);\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractReasonFromSummary(summary) {\n  if (summary.includes(\"—\")) return summary.split(\"—\").pop().trim();\n  if (summary.includes(\"-\")) return summary.split(\"-\").pop().trim();\n  return \"\";\n}\n\n// ---- CLINIC HOURS CHECK ----\nfunction withinClinicHours(startUTC, endUTC) {\n  const dayOfWeek = torontoDayOfWeek(startUTC);\n  const hours = CLINIC_HOURS[dayOfWeek];\n  if (!hours) return false;\n  const startLocal = toTorontoComponents(startUTC);\n  const endLocal = toTorontoComponents(endUTC);\n  const startMinutes = startLocal.hour * 60 + startLocal.minute;\n  const endMinutes = endLocal.hour * 60 + endLocal.minute;\n  return (\n    startMinutes >= hours.open * 60 &&\n    endMinutes <= hours.close * 60 &&\n    startLocal.day === endLocal.day\n  );\n}\n\n// ---- SLOT CONFLICT CHECK ----\nfunction slotFree(startUTC, endUTC, bookedSlots, excludeEventId) {\n  for (const b of bookedSlots) {\n    if (b.id === excludeEventId) continue;\n    if (startUTC < b.end && endUTC > b.start) return false;\n  }\n  return true;\n}\n\n// ---- FIND ALTERNATIVES ----\nfunction findAlternatives(fromUTC, duration, bookedSlots, excludeEventId) {\n  const options = [];\n  const fromLocal = toTorontoComponents(fromUTC);\n  const stepMinutes = duration;\n\n  for (let dayOffset = 0; dayOffset < 14 && options.length < 3; dayOffset++) {\n    const testDate = torontoToUTC(fromLocal.year, fromLocal.month, fromLocal.day + dayOffset, 10, 0);\n    const comps = toTorontoComponents(testDate);\n    const dayOfWeek = torontoDayOfWeek(testDate);\n    const hours = CLINIC_HOURS[dayOfWeek];\n    if (!hours) continue;\n\n    const openMinutes = hours.open * 60;\n    const closeMinutes = hours.close * 60;\n\n    for (let minuteOfDay = openMinutes; minuteOfDay + duration <= closeMinutes && options.length < 3; minuteOfDay += stepMinutes) {\n      const h = Math.floor(minuteOfDay / 60);\n      const m = minuteOfDay % 60;\n      const slotStart = torontoToUTC(comps.year, comps.month, comps.day, h, m);\n      const slotEnd = new Date(slotStart.getTime() + duration * 60000);\n      if (dayOffset === 0 && slotStart.getTime() <= fromUTC.getTime()) continue;\n      if (slotStart.getTime() < Date.now()) continue;\n      if (withinClinicHours(slotStart, slotEnd) && slotFree(slotStart, slotEnd, bookedSlots, excludeEventId)) {\n        options.push({\n          datetime: slotStart.toISOString(),\n          label: formatSlot(slotStart)\n        });\n      }\n    }\n  }\n  return options;\n}\n\n// ============================================\n// MAIN LOGIC\n// ============================================\nconst w = $('Webhook').first().json;\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\nconst phone = webhookData.phone || \"\";\nconst oldDT = parseTorontoDatetime(webhookData.old_datetime);\nconst newDT = parseTorontoDatetime(webhookData.new_datetime);\n\n// ---- Parse all calendar events ----\nfunction extractPhone(eventJson) {\n  const desc = (eventJson.description || \"\") + \" \" + JSON.stringify(eventJson.extendedProperties || {});\n  const phoneMatch = desc.match(/\\+?1?\\d{10,11}/);\n  if (phoneMatch) return phoneMatch[0].replace(/\\D/g, \"\").slice(-10);\n  if (eventJson.attendees) {\n    for (const a of eventJson.attendees) {\n      const aMatch = ((a.displayName || \"\") + \" \" + (a.email || \"\")).match(/\\+?1?\\d{10,11}/);\n      if (aMatch) return aMatch[0].replace(/\\D/g, \"\").slice(-10);\n    }\n  }\n  return \"\";\n}\n\nfunction normalizePhone(p) {\n  return (p || \"\").replace(/\\D/g, \"\").slice(-10);\n}\n\nconst allEvents = $input.all()\n  .filter(e => e.json.start && e.json.end)\n  .map(e => ({\n    id: e.json.id,\n    summary: e.json.summary || \"\",\n    description: e.json.description || \"\",\n    start: new Date(e.json.start.dateTime || e.json.start.date),\n    end: new Date(e.json.end.dateTime || e.json.end.date),\n    phone: extractPhone(e.json)\n  }));\n\n// ---- FIND THE OLD APPOINTMENT ----\nconst callerPhone = normalizePhone(phone);\nconst oldTime = oldDT ? oldDT.getTime() : null;\nconst TOLERANCE_MS = 5 * 60 * 1000;\n\nlet matchedEvent = null;\n\n// Match by phone + time\nif (oldTime && callerPhone) {\n  matchedEvent = allEvents.find(e =>\n    normalizePhone(e.phone) === callerPhone &&\n    Math.abs(e.start.getTime() - oldTime) < TOLERANCE_MS\n  );\n}\n\n// Fallback: time only\nif (!matchedEvent && oldTime) {\n  matchedEvent = allEvents.find(e =>\n    Math.abs(e.start.getTime() - oldTime) < TOLERANCE_MS\n  );\n}\n\n// Fallback: phone only — nearest future appointment\nif (!matchedEvent && callerPhone) {\n  const now = Date.now();\n  const phoneMatches = allEvents\n    .filter(e => normalizePhone(e.phone) === callerPhone && e.start.getTime() > now)\n    .sort((a, b) => a.start.getTime() - b.start.getTime());\n  if (phoneMatches.length === 1) {\n    matchedEvent = phoneMatches[0];\n  } else if (phoneMatches.length > 1 && oldTime) {\n    matchedEvent = phoneMatches.reduce((best, e) =>\n      Math.abs(e.start.getTime() - oldTime) < Math.abs(best.start.getTime() - oldTime) ? e : best\n    );\n  }\n}\n\n// ---- NO MATCH ----\nif (!matchedEvent) {\n  return [{\n    json: {\n      success: false,\n      action: \"transfer\",\n      message: \"I wasn't able to find that appointment. Let me connect you with the team to help sort this out.\"\n    }\n  }];\n}\n\n// ---- DETERMINE DURATION FROM EXISTING EVENT'S REASON ----\n// Check description first (most reliable), then fall back to summary\nconst reason = extractReasonFromDescription(matchedEvent.description) || extractReasonFromSummary(matchedEvent.summary);\nconst duration = getDuration(reason);\n\n// ---- BUILD BOOKED SLOTS ----\nconst bookedSlots = allEvents.map(e => ({\n  id: e.id,\n  start: e.start,\n  end: e.end\n}));\n\n// ---- CHECK NEW TIME SLOT ----\nconst newEnd = new Date(newDT.getTime() + duration * 60000);\n\nif (withinClinicHours(newDT, newEnd) && slotFree(newDT, newEnd, bookedSlots, matchedEvent.id)) {\n  return [{\n    json: {\n      success: true,\n      event_id: matchedEvent.id,\n      old_start: matchedEvent.start.toISOString(),\n      old_label: formatSlot(matchedEvent.start),\n      new_start: newDT.toISOString(),\n      new_end: newEnd.toISOString(),\n      new_label: formatSlot(newDT),\n      duration_minutes: duration,\n      summary: matchedEvent.summary,\n      description: matchedEvent.description,\n      message: \"Perfect — you're moved to \" + formatSlot(newDT) + \".\"\n    }\n  }];\n}\n\n// ---- OUTSIDE OFFICE HOURS — TELL CALLER EXPLICITLY ----\nif (!withinClinicHours(newDT, newEnd)) {\n  const alternatives = findAlternatives(newDT, duration, bookedSlots, matchedEvent.id);\n  let message;\n  if (alternatives.length > 0) {\n    const labels = alternatives.map(a => a.label);\n    if (labels.length === 1) {\n      message = \"That's outside our office hours. The nearest opening I have is \" + labels[0] + \".\";\n    } else if (labels.length === 2) {\n      message = \"That's outside our office hours. I can offer \" + labels[0] + \" or \" + labels[1] + \".\";\n    } else {\n      message = \"That's outside our office hours. I can do \" + labels[0] + \", \" + labels[1] + \", or \" + labels[2] + \" — which works best?\";\n    }\n  } else {\n    message = \"That's outside our office hours, and I'm not finding any openings in the next two weeks. Let me connect you with the team.\";\n  }\n  return [{\n    json: {\n      success: false,\n      outside_hours: true,\n      event_id: matchedEvent.id,\n      old_start: matchedEvent.start.toISOString(),\n      old_label: formatSlot(matchedEvent.start),\n      alternatives: alternatives,\n      message: message\n    }\n  }];\n}\n\n// ---- NOT AVAILABLE (booked) — FIND ALTERNATIVES ----\nconst alternatives = findAlternatives(newDT, duration, bookedSlots, matchedEvent.id);\n\nlet message;\nif (alternatives.length > 0) {\n  const labels = alternatives.map(a => a.label);\n  if (labels.length === 1) {\n    message = \"That time isn't available. The nearest opening I have is \" + labels[0] + \".\";\n  } else if (labels.length === 2) {\n    message = \"That time isn't available. I can offer \" + labels[0] + \" or \" + labels[1] + \".\";\n  } else {\n    message = \"That time isn't available. I can do \" + labels[0] + \", \" + labels[1] + \", or \" + labels[2] + \" — which works best?\";\n  }\n} else {\n  message = \"I'm not finding any openings in the next two weeks. Let me connect you with the team.\";\n}\n\nreturn [{\n  json: {\n    success: false,\n    event_id: matchedEvent.id,\n    old_start: matchedEvent.start.toISOString(),\n    old_label: formatSlot(matchedEvent.start),\n    alternatives: alternatives,\n    message: message\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        576
+      ],
+      "id": "de228a99-3403-4a2a-9eb5-74ec51bf7aab",
+      "name": "Rescheduling logic"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "limit": 5,
+        "timeMin": "={{ $now.toISO().split('.')[0] + 'Z' }}",
+        "timeMax": "={{ $now.plus(180, 'days').toISO().split('.')[0] + 'Z' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        384
+      ],
+      "id": "db08a476-836b-4c4d-a72d-57c2bc03eaa0",
+      "name": "Cancellation ",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\nconst w = $('Webhook').first().json;\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\nconst fc = w.message?.functionCall || w.body?.message?.functionCall || {};\nconst params = (fc.parameters && Object.keys(fc.parameters).length > 0) ? fc.parameters : webhookData;\n\nconst rawPhone = params.phone || \"\";\n// Normalize to last 10 digits for flexible matching\nconst phoneDigits = rawPhone.replace(/\\D/g, \"\").slice(-10);\nconst targetDatetime = params.appointment_datetime || \"\";\n\nconst events = $input.all();\n\n// Helper: check if description contains the phone (flexible matching)\nfunction phoneMatch(desc) {\n  if (!phoneDigits) return false;\n  const descDigits = desc.replace(/\\D/g, \"\");\n  return descDigits.includes(phoneDigits);\n}\n\n// Try to match by phone + datetime first\nlet match = null;\n\nif (phoneDigits && targetDatetime) {\n  // Parse target time — treat as Toronto local if no timezone\n  let targetTime;\n  if (targetDatetime.includes(\"Z\") || /[+-]\\d{2}:\\d{2}$/.test(targetDatetime)) {\n    targetTime = new Date(targetDatetime).getTime();\n  } else {\n    // Use the same torontoToUTC approach\n    const m = targetDatetime.match(/(\\d{4})-(\\d{2})-(\\d{2})(?:T(\\d{2}):(\\d{2}))?/);\n    if (m) {\n      const rough = new Date(targetDatetime + \"-05:00\"); // EST fallback\n      targetTime = rough.getTime();\n    } else {\n      targetTime = new Date(targetDatetime).getTime();\n    }\n  }\n  const TOLERANCE = 60 * 60 * 1000; // 1 hour tolerance for timezone differences\n\n  match = events.find(item => {\n    const desc = (item.json.description || '');\n    const startTime = new Date(item.json.start?.dateTime || item.json.start?.date).getTime();\n    return phoneMatch(desc) && Math.abs(startTime - targetTime) < TOLERANCE;\n  });\n}\n\n// Fallback: match by phone only (nearest future appointment)\nif (!match && phoneDigits) {\n  const now = Date.now();\n  const phoneMatches = events\n    .filter(item => phoneMatch(item.json.description || ''))\n    .filter(item => new Date(item.json.start?.dateTime || item.json.start?.date).getTime() > now)\n    .sort((a, b) =>\n      new Date(a.json.start?.dateTime || a.json.start?.date).getTime() -\n      new Date(b.json.start?.dateTime || b.json.start?.date).getTime()\n    );\n  if (phoneMatches.length > 0) {\n    match = phoneMatches[0];\n  }\n}\n\n// Fallback: match by name in summary if phone fails\nif (!match) {\n  const name = (params.first_name || \"\").toLowerCase() + \" \" + (params.last_name || \"\").toLowerCase();\n  if (name.trim()) {\n    const now = Date.now();\n    const nameMatches = events\n      .filter(item => (item.json.summary || '').toLowerCase().includes(name.trim()))\n      .filter(item => new Date(item.json.start?.dateTime || item.json.start?.date).getTime() > now)\n      .sort((a, b) =>\n        new Date(a.json.start?.dateTime || a.json.start?.date).getTime() -\n        new Date(b.json.start?.dateTime || b.json.start?.date).getTime()\n      );\n    if (nameMatches.length > 0) {\n      match = nameMatches[0];\n    }\n  }\n}\n\nif (!match) {\n  return [{\n    json: {\n      success: false,\n      message: \"I wasn't able to find that appointment. Let me connect you with the team.\"\n    }\n  }];\n}\n\nconst startDT = match.json.start?.dateTime || match.json.start?.date;\nconst label = new Date(startDT).toLocaleString('en-CA', {\n  timeZone: 'America/Toronto',\n  weekday: 'long',\n  month: 'long',\n  day: 'numeric',\n  hour: 'numeric',\n  minute: '2-digit',\n  hour12: true\n});\n\nreturn [{\n  json: {\n    success: true,\n    event_id: match.json.id,\n    summary: match.json.summary || \"\",\n    description: match.json.description || \"\",\n    start_time: startDT,\n    phone: rawPhone,\n    cancelled_label: label,\n    message: \"Cancellation request submitted for manual review.\"\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        384
+      ],
+      "id": "19e203f6-e36a-4fb4-a6df-1744f27543b3",
+      "name": "Cancel Logic"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "timeMin": "={{ $now.toISO().split('.')[0] + 'Z' }}",
+        "timeMax": "={{ $now.plus(180, 'days').toISO().split('.')[0] + 'Z' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        768
+      ],
+      "id": "d302dbf4-556a-4f39-a6a7-60e7b7be2099",
+      "name": "Appointment Lookup",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "timeMin": "={{ $json.requested_datetime ? $json.requested_datetime.split('T')[0] + 'T00:00:00Z' : $now.toISO().split('.')[0] + 'Z' }}",
+        "timeMax": "={{ $now.plus(14, 'days').toISO().split('.')[0] + 'Z' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1344b651-c535-4513-b1f5-9bb5fc7dd106",
+      "name": "Check availability function",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nconst w = $('Webhook').first().json;\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\n\nconst reason = String(webhookData.reason || \"\").toLowerCase().trim();\nconst rawRequested = webhookData.requested_datetime;\n\n// validate datetime\nif (!rawRequested) {\n  throw new Error(\"requested_datetime is missing — payload keys: \" + Object.keys(webhookData).join(\", \"));\n}\n\nconst requestedDate = new Date(rawRequested);\n\nif (isNaN(requestedDate.getTime())) {\n  throw new Error(`Invalid requested_datetime: ${rawRequested}`);\n}\n\nconst durationMap = [\n  { keywords: [\"root canal\"], duration: 120 },\n  { keywords: [\"extraction\", \"wisdom\"], duration: 90 },\n  { keywords: [\"crown\", \"implant\", \"veneer\", \"bridge\"], duration: 90 },\n  { keywords: [\"cleaning\", \"checkup\", \"hygiene\", \"routine\", \"exam\"], duration: 60 },\n  { keywords: [\"filling\", \"cavity\", \"broken filling\"], duration: 60 },\n  { keywords: [\"whitening\"], duration: 60 },\n  { keywords: [\"sensitivity\", \"pain\", \"toothache\", \"chipped\"], duration: 60 },\n];\n\nlet duration = 60;\n\nfor (const entry of durationMap) {\n  if (entry.keywords.some(k => reason.includes(k))) {\n    duration = entry.duration;\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      ...webhookData,\n      reason: webhookData.reason || \"\",\n      requested_datetime: requestedDate.toISOString(),\n      requested_date: requestedDate.toISOString().split(\"T\")[0],\n      duration_minutes: duration\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "df89078a-2895-4e87-ada2-269c40a89733",
+      "name": "classify reason"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nconst current = $json || {};\nconst webhookRaw = $('Webhook').first().json;\n\n// Try extracting from current item first, then from webhook\nlet webhookData = {};\nconst fromCurrent = normalizeRetellKeys(extractRetellParams(current));\nconst fromWebhook = normalizeRetellKeys(extractRetellParams(webhookRaw));\n\n// Use whichever has the actual data\nif (fromCurrent.requested_date || fromCurrent.reason) {\n  webhookData = fromCurrent;\n} else if (fromWebhook.requested_date || fromWebhook.reason) {\n  webhookData = fromWebhook;\n} else {\n  // Last resort: merge both\n  webhookData = { ...fromWebhook, ...fromCurrent };\n}\n\nconst reason = String(webhookData.reason || \"\").toLowerCase().trim();\nconst requestedDate = String(webhookData.requested_date || \"\").trim();\nconst timePreference = String(\n  webhookData.time_preference || webhookData.time_prefernce || \"\"\n).toLowerCase().trim();\n\nif (!requestedDate) {\n  throw new Error(\"requested_date is missing — current keys: \" + JSON.stringify(Object.keys(current)) + \" | webhook body keys: \" + JSON.stringify(Object.keys(webhookRaw.body || {})) + \" | extracted: \" + JSON.stringify(webhookData).slice(0, 300));\n}\n\nconst durationMap = [\n  { keywords: [\"root canal\", \"root canal consultation\", \"endodontic\"], duration: 120 },\n  { keywords: [\"extraction\", \"wisdom\"], duration: 90 },\n  { keywords: [\"crown\", \"implant\", \"veneer\", \"bridge\"], duration: 90 },\n  { keywords: [\"cleaning\", \"checkup\", \"hygiene\", \"routine\", \"exam\"], duration: 60 },\n  { keywords: [\"filling\", \"cavity\", \"broken filling\"], duration: 60 },\n  { keywords: [\"whitening\"], duration: 60 },\n  { keywords: [\"sensitivity\", \"pain\", \"toothache\", \"chipped\"], duration: 60 },\n];\n\nlet duration = 60;\n\nfor (const entry of durationMap) {\n  if (entry.keywords.some(k => reason.includes(k))) {\n    duration = entry.duration;\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      ...webhookData,\n      reason: webhookData.reason || \"\",\n      requested_date: requestedDate,\n      time_preference: timePreference,\n      duration_minutes: duration\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1344
+      ],
+      "id": "bdab7567-c785-4ae1-b5d0-2ed4025f87e1",
+      "name": "Get available slots - process input"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.requested_date + 'T00:00:00' }}",
+        "timeMax": "={{ $json.requested_date + 'T23:59:59' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        1344
+      ],
+      "id": "e5646b2e-29d9-413e-ad83-9ed4c3cf4c81",
+      "name": "Get many events",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const CLINIC_HOURS = {\n  1: { open: 9, close: 19 }, // Monday\n  2: { open: 9, close: 17 }, // Tuesday\n  3: { open: 9, close: 17 }, // Wednesday\n  4: { open: 9, close: 17 }, // Thursday\n  5: null,                   // Friday CLOSED\n  6: { open: 9, close: 15 }, // Saturday\n  0: null                    // Sunday CLOSED\n};\nfunction getDayOfWeek(dateStr) {\n  const [y, m, d] = dateStr.split('-').map(Number);\n  return new Date(y, m - 1, d).getDay();\n}\n\nfunction formatSlot(date) {\n  return date.toLocaleString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"long\",\n    month: \"long\",\n    day: \"numeric\",\n    hour: \"numeric\",\n    minute: \"2-digit\",\n    hour12: true\n  });\n}\n\nfunction overlaps(startA, endA, startB, endB) {\n  return startA < endB && endA > startB;\n}\n\nconst input = $('Get available slots - process input').first().json;\nconst requestedDate = input.requested_date;\nconst timePreference = String(input.time_preference || '').toLowerCase();\nconst duration = input.duration_minutes || 60;\nconst weekday = getDayOfWeek(requestedDate);\nconst hours = CLINIC_HOURS[weekday];\n\nif (!hours) {\n  return [{\n    json: {\n      success: false,\n      slots: [],\n      message: \"The clinic is closed that day.\"\n    }\n  }];\n}\n\nconst bookedEvents = items\n  .filter(item => item.json.start && item.json.end)\n  .map(item => ({\n    start: new Date(item.json.start.dateTime || item.json.start.date),\n    end: new Date(item.json.end.dateTime || item.json.end.date)\n  }));\n\nlet startHour = hours.open;\nlet endHour = hours.close;\n\nif (timePreference.includes(\"morning\")) {\n  startHour = Math.max(startHour, 10);\n  endHour = Math.min(endHour, 12);\n} else if (timePreference.includes(\"afternoon\")) {\n  startHour = Math.max(startHour, 12);\n  endHour = Math.min(endHour, 17);\n} else if (timePreference.includes(\"evening\")) {\n  startHour = Math.max(startHour, 17);\n}\n\nconst slots = [];\nconst stepMinutes = duration;\nconst totalStartMinutes = startHour * 60;\nconst totalEndMinutes = endHour * 60;\n\nfor (let minutes = totalStartMinutes; minutes < totalEndMinutes; minutes += stepMinutes) {\n  const hour = Math.floor(minutes / 60);\n  const minute = minutes % 60;\n  const slotStart = new Date(\n    `${requestedDate}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00-04:00`\n  );\n  const slotEnd = new Date(slotStart.getTime() + duration * 60000);\n  const closeTime = new Date(\n    `${requestedDate}T${String(endHour).padStart(2, '0')}:00:00-04:00`\n  );\n\n  if (slotEnd > closeTime) continue;\n\n  const conflict = bookedEvents.some(event =>\n    overlaps(slotStart, slotEnd, event.start, event.end)\n  );\n\n  if (!conflict) {\n    slots.push({\n      datetime: slotStart.toISOString(),\n      label: formatSlot(slotStart)\n    });\n  }\n\n  if (slots.length >= 5) break;\n}\n\nlet message = \"I'm not finding any openings that day.\";\nif (slots.length === 1) {\n  message = `I have ${slots[0].label} available.`;\n} else if (slots.length === 2) {\n  message = `I have ${slots[0].label} or ${slots[1].label} available.`;\n} else if (slots.length >= 3) {\n  message = `I have ${slots[0].label}, ${slots[1].label}, or ${slots[2].label} available.`;\n}\n\nreturn [{\n  json: {\n    success: true,\n    requested_date: requestedDate,\n    time_preference: timePreference,\n    duration_minutes: duration,\n    slots,\n    message\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        1344
+      ],
+      "id": "48a3e3d0-e44e-4c52-bbb2-5ec9a6e6bba1",
+      "name": "Finder for time slots1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        1344
+      ],
+      "id": "412a5ce0-0c53-4b5d-bd8e-0f1c3eb42579",
+      "name": "Respond to Webhook6"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\nconst items = $input.all();\nconst w = $('Webhook').first().json;\n\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\n\nconst phone = (webhookData.phone || \"\").replace(/\\D/g,'');\nconst name = (webhookData.name_on_file || '').toLowerCase().trim();\n\nconst now = new Date();\n\nconst matches = items.filter(item => {\n  const desc = (item.json.description || '').toLowerCase();\n  const title = (item.json.summary || '').toLowerCase();\n\n  const descPhone = desc.replace(/\\D/g,'');\n\n  const startDT = item.json.start?.dateTime || item.json.start?.date;\n  const apptDate = new Date(startDT);\n\n  const phoneMatch = descPhone.includes(phone);\n  const nameMatch = title.includes(name);\n  const future = apptDate >= now;\n\n  return phoneMatch && nameMatch && future;\n});\n\nif (matches.length === 0) {\n  return [{\n    json: {\n      found: false,\n      message: \"No appointment found under that name or number.\"\n    }\n  }];\n}\n\nconst appt = matches[0].json;\nconst startDT = appt.start.dateTime || appt.start.date;\n\nreturn [{\n  json: {\n    found: true,\n    appointment_datetime: startDT,\n    summary: appt.summary,\n    description: appt.description,\n    message: \"I found your appointment: \" + appt.summary + \" on \" + new Date(startDT).toLocaleString('en-CA', {\n      timeZone: 'America/Toronto',\n      weekday: 'long',\n      month: 'long',\n      day: 'numeric',\n      hour: 'numeric',\n      minute: '2-digit',\n      hour12: true\n    })\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        768
+      ],
+      "id": "936f5a5a-da86-4ee1-8ff9-597992016d23",
+      "name": "Lookup_logic"
+    },
+    {
+      "parameters": {
+        "jsCode": "if ($json.success === false) {\n  return [\n    {\n      json: {\n        ...$json\n      }\n    }\n  ];\n}\n\nfunction getDuration(reason) {\n  const r = String(reason || \"\").toLowerCase().trim();\n\n  if (r.includes(\"root canal\")) return 120;\n  if (r.includes(\"extraction\")) return 90;\n  if (r.includes(\"crown\")) return 90;\n\n  return 60;\n}\n\nreturn [\n  {\n    json: {\n      ...$json,\n      duration_minutes: getDuration($json.new_value)\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1536
+      ],
+      "id": "744c7a55-9c9a-4bc0-8cc5-c15b6f49eb4d",
+      "name": "Calculate Procedure Duration"
+    },
+    {
+      "parameters": {
+        "jsCode": "if ($json.success === false) {\n  return [\n    {\n      json: {\n        ...$json\n      }\n    }\n  ];\n}\n\nconst start = new Date($json.start_time);\nconst duration = Number($json.duration_minutes) || 60;\n\nif (isNaN(start.getTime())) {\n  return [\n    {\n      json: {\n        ...$json,\n        success: false,\n        message: \"Invalid or missing start_time before Build Requested Slot.\"\n      }\n    }\n  ];\n}\n\nconst end = new Date(start);\nend.setMinutes(end.getMinutes() + duration);\n\nreturn [\n  {\n    json: {\n      ...$json,\n      requested_start: start.toISOString(),\n      requested_end: end.toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1120,
+        1536
+      ],
+      "id": "37ffaef9-8f17-4d88-bc14-849d6dba00ba",
+      "name": "Build Requested Slot"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.requested_start }}",
+        "timeMax": "={{ $json.requested_end }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        1536
+      ],
+      "id": "60fb7faf-e3d4-4dc0-90d0-02ea09f26b42",
+      "name": "Check Slot Availability",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fd85f573-d4cb-4539-85b6-1644c61b3695",
+              "leftValue": "={{$json.conflict_count}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1792,
+        1536
+      ],
+      "id": "69382776-8eb7-4030-9003-6f858bde627a",
+      "name": "Slot Available?"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Your update request has been submitted for manual review.\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2464,
+        1440
+      ],
+      "id": "39482c11-de1a-4227-86c0-bb61231e772c",
+      "name": "Respond to Webhook7"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.requested_date + 'T00:00:00' }}",
+        "timeMax": "={{ $json.requested_date + 'T23:59:59' }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        2240,
+        1632
+      ],
+      "id": "9c49b729-6cc2-48b0-b5df-5190f4974950",
+      "name": "Get many events2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const CLINIC_HOURS = {\n  1: { open: 9, close: 19 }, // Monday\n  2: { open: 9, close: 17 }, // Tuesday\n  3: { open: 9, close: 17 }, // Wednesday\n  4: { open: 9, close: 17 }, // Thursday\n  5: null,                   // Friday closed\n  6: { open: 9, close: 15 }, // Saturday\n  0: null                    // Sunday closed\n};\n\nfunction getDayOfWeek(dateStr) {\n  const [y, m, d] = dateStr.split('-').map(Number);\n  return new Date(y, m - 1, d).getDay();\n}\n\nfunction formatSlot(date) {\n  return date.toLocaleString(\"en-CA\", {\n    timeZone: \"America/Toronto\",\n    weekday: \"long\",\n    month: \"long\",\n    day: \"numeric\",\n    hour: \"numeric\",\n    minute: \"2-digit\",\n    hour12: true\n  });\n}\n\nfunction overlaps(startA, endA, startB, endB) {\n  return startA < endB && endA > startB;\n}\n\nconst input = $('Get available slots - process input2').first().json;\n\nconst requestedDate = String(input.requested_date || input.appointment_date || \"\").trim();\nconst timePreference = String(input.time_preference || \"\").toLowerCase().trim();\nconst duration = Number(input.duration_minutes) || 60;\nconst originalEventId = String(input.event_id || \"\");\n\nif (!requestedDate) {\n  return [{\n    json: {\n      success: false,\n      slots: [],\n      message: \"Requested date is missing.\"\n    }\n  }];\n}\n\nconst weekday = getDayOfWeek(requestedDate);\nconst hours = CLINIC_HOURS[weekday];\n\nif (!hours) {\n  return [{\n    json: {\n      success: false,\n      slots: [],\n      message: \"The clinic is closed that day.\"\n    }\n  }];\n}\n\nconst bookedEvents = items\n  .filter(item => item.json.start && item.json.end)\n  .map(item => ({\n    start: new Date(item.json.start.dateTime || item.json.start.date),\n    end: new Date(item.json.end.dateTime || item.json.end.date),\n    id: item.json.id || \"\"\n  }));\n\nlet startHour = hours.open;\nlet endHour = hours.close;\n\nif (timePreference.includes(\"morning\")) {\n  startHour = Math.max(startHour, 9);\n  endHour = Math.min(endHour, 12);\n} else if (timePreference.includes(\"afternoon\")) {\n  startHour = Math.max(startHour, 12);\n  endHour = Math.min(endHour, 17);\n} else if (timePreference.includes(\"evening\")) {\n  startHour = Math.max(startHour, 17);\n}\n\nconst slots = [];\n\nfor (let hour = startHour; hour < endHour; hour++) {\n  for (const minute of [0, 30]) {\n    const slotStart = new Date(\n      `${requestedDate}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00-04:00`\n    );\n\n    const slotEnd = new Date(slotStart.getTime() + duration * 60000);\n\n    const closeTime = new Date(\n      `${requestedDate}T${String(endHour).padStart(2, '0')}:00:00-04:00`\n    );\n\n    if (slotEnd > closeTime) continue;\n\n    const conflict = bookedEvents.some(event => {\n      return overlaps(slotStart, slotEnd, event.start, event.end);\n    });\n\n    if (!conflict) {\n      slots.push({\n        datetime: slotStart.toISOString(),\n        label: formatSlot(slotStart)\n      });\n    }\n\n    if (slots.length >= 5) break;\n  }\n\n  if (slots.length >= 5) break;\n}\n\nlet message = \"I’m not finding any openings that day.\";\n\nif (slots.length === 1) {\n  message = `I have ${slots[0].label} available.`;\n} else if (slots.length === 2) {\n  message = `I have ${slots[0].label} or ${slots[1].label} available.`;\n} else if (slots.length >= 3) {\n  message = `I have ${slots[0].label}, ${slots[1].label}, or ${slots[2].label} available.`;\n}\n\nreturn [{\n  json: {\n    success: slots.length > 0,\n    requested_date: requestedDate,\n    time_preference: timePreference,\n    duration_minutes: duration,\n    slots,\n    message\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        1632
+      ],
+      "id": "624eab0f-90ce-4cd6-977e-94e6dd33cb9b",
+      "name": "Finder for time slots2"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\nconst current = $json || {};\nconst webhookRaw = $('Webhook').first().json || {};\n\nconst webhookParams = normalizeRetellKeys(extractRetellParams(webhookRaw));\n\nconst reason = String(\n  current.new_value ||\n  current.reason ||\n  webhookParams.new_value ||\n  webhookParams.reason ||\n  \"\"\n).toLowerCase().trim();\n\nconst requestedDate = String(\n  current.appointment_date ||\n  current.requested_date ||\n  webhookParams.appointment_date ||\n  webhookParams.requested_date ||\n  \"\"\n).trim();\n\nconst timePreference = String(\n  current.time_preference ||\n  webhookParams.time_preference ||\n  webhookParams.time_prefernce ||\n  \"\"\n).toLowerCase().trim();\n\nif (!requestedDate) {\n  return [\n    {\n      json: {\n        success: false,\n        message: \"requested_date is missing\",\n        debug_current: current\n      }\n    }\n  ];\n}\n\nconst durationMap = [\n  { keywords: [\"root canal\"], duration: 120 },\n  { keywords: [\"extraction\", \"wisdom\"], duration: 90 },\n  { keywords: [\"crown\", \"implant\", \"veneer\", \"bridge\"], duration: 90 },\n  { keywords: [\"cleaning\", \"checkup\", \"hygiene\", \"routine\", \"exam\"], duration: 60 },\n  { keywords: [\"filling\", \"cavity\", \"broken filling\"], duration: 60 },\n  { keywords: [\"whitening\"], duration: 60 },\n  { keywords: [\"sensitivity\", \"pain\", \"toothache\", \"chipped\"], duration: 60 },\n];\n\nlet duration = Number(current.duration_minutes) || 60;\n\nif (!current.duration_minutes) {\n  for (const entry of durationMap) {\n    if (entry.keywords.some(k => reason.includes(k))) {\n      duration = entry.duration;\n      break;\n    }\n  }\n}\n\nreturn [\n  {\n    json: {\n      ...current,\n      reason,\n      requested_date: requestedDate,\n      time_preference: timePreference,\n      duration_minutes: duration\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        1632
+      ],
+      "id": "dbb4791a-f515-47ae-8d89-d1cd9e28b53e",
+      "name": "Get available slots - process input2"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        2688,
+        1632
+      ],
+      "id": "5d32e861-6173-431d-8d45-0134448673ea",
+      "name": "Respond to Webhook8"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.field_to_edit }}",
+                    "rightValue": "reason",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "d5f5daa9-52d5-4a52-9ca9-6febc09260a9"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "00abc8c6-3fac-4c5e-b07d-4e98c83d8e25",
+                    "leftValue": "={{ $json.field_to_edit }}",
+                    "rightValue": "phone",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d33e6320-be5f-40d3-b827-0028a4ce62cf",
+                    "leftValue": "={{ $json.field_to_edit }}",
+                    "rightValue": "email",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        1712
+      ],
+      "id": "6a02d41d-c5d7-4fce-9ba3-44a2ae9e6c8e",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        1728
+      ],
+      "id": "1d2a285b-9966-42c0-a1c0-260eb5ee987a",
+      "name": "Connect Phone Branch",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "timeMin": "={{ $json.appointment_date + \"T00:00:00-04:00\" }}",
+        "timeMax": "={{ $json.appointment_date + \"T23:59:59-04:00\" }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        1536
+      ],
+      "id": "5a205652-99e7-49a9-ab21-66cc2bc4290d",
+      "name": "Connect Reason Branch",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst input = $('Process Input ').first().json;\nconst items = $input.all();\n\nconst name = String(input.name_on_file || \"\").toLowerCase().trim();\nconst phone = String(input.phone || \"\").replace(/\\D/g, \"\").slice(-10);\nconst newValue = String(input.new_value || \"\").trim();\nconst appointmentDate = String(input.appointment_date || \"\").trim();\n\nconst events = items.map(item => item.json);\n\nfunction cleanPhone(str) {\n  return String(str || \"\").replace(/\\D/g, \"\").slice(-10);\n}\n\nconst now = Date.now();\nlet match = null;\n\nfor (const event of events) {\n  const future = new Date(event.start?.dateTime || event.start?.date || 0).getTime() > now;\n  if (!future) continue;\n\n  const summary = String(event.summary || \"\").toLowerCase();\n  const description = String(event.description || \"\");\n  const descPhone = cleanPhone(description);\n\n  const nameMatch = name && summary.includes(name);\n  const phoneMatch = phone && descPhone.includes(phone);\n\n  if (nameMatch || phoneMatch) {\n    // If appointment_date given, prefer that match\n    if (appointmentDate) {\n      const start = event.start?.dateTime || event.start?.date || \"\";\n      if (start.startsWith(appointmentDate)) {\n        match = event;\n        break;\n      }\n      if (!match && (nameMatch || phoneMatch)) match = event;\n    } else {\n      match = event;\n      break;\n    }\n  }\n}\n\nif (!match) {\n  return [{\n    json: {\n      success: false,\n      message: \"Appointment not found.\"\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    event_id: match.id,\n    summary: match.summary,\n    description: match.description,\n    start_time: match.start?.dateTime,\n    new_value: newValue\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1728
+      ],
+      "id": "021ce0db-f111-489b-8f23-be77074438a1",
+      "name": "Edit Logic Phone"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\n// ═══ UNIVERSAL PARAM EXTRACTOR (works with both single-prompt and conversation-flow agents) ═══\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\nconst items = $input.all();\nconst w = $('Webhook').first().json;\n\n// support different webhook payload shapes\nconst webhookData = normalizeRetellKeys(extractRetellParams(w));\n\nconst phone = String(webhookData.phone || \"\").replace(/\\D/g, \"\");\nconst name = String(webhookData.name_on_file || \"\").toLowerCase().trim();\nconst appointmentDate = String(webhookData.appointment_date || \"\").trim();\nconst newReason = String(webhookData.new_value || \"\").trim();\n\nfunction cleanPhone(str) {\n  return String(str || \"\").replace(/\\D/g, \"\");\n}\n\nfunction getStartDT(item) {\n  return item.json.start?.dateTime || item.json.start?.date || \"\";\n}\n\nconst matches = items.filter(item => {\n  const desc = String(item.json.description || \"\").toLowerCase();\n  const title = String(item.json.summary || \"\").toLowerCase();\n\n  const descPhone = cleanPhone(desc);\n  const startDT = getStartDT(item);\n\n  const phoneMatch = phone ? descPhone.includes(phone) : false;\n  const nameMatch = name ? title.includes(name) : false;\n  const dateMatch = appointmentDate ? String(startDT).startsWith(appointmentDate) : true;\n\n  return phoneMatch && nameMatch && dateMatch;\n});\n\nif (matches.length === 0) {\n  return [{\n    json: {\n      success: false,\n      message: \"Appointment not found.\",\n      searched_name: name,\n      searched_phone: phone,\n      searched_date: appointmentDate\n    }\n  }];\n}\n\n// if multiple, take the earliest matching one\nmatches.sort((a, b) => {\n  const aTime = new Date(getStartDT(a)).getTime();\n  const bTime = new Date(getStartDT(b)).getTime();\n  return aTime - bTime;\n});\n\nconst appt = matches[0].json;\nconst startDT = appt.start?.dateTime || appt.start?.date || \"\";\n\nreturn [{\n  json: {\n    success: true,\n    event_id: appt.id || \"\",\n    summary: appt.summary || \"\",\n    description: appt.description || \"\",\n    start_time: startDT,\n    phone: webhookData.phone || \"\",\n    appointment_date: appointmentDate,\n    new_value: newReason\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1536
+      ],
+      "id": "7a70ebec-747e-4e27-9074-f3a39a8f7ce4",
+      "name": "Edit Logic Reason"
+    },
+    {
+      "parameters": {
+        "jsCode": "const desc = $json.description || \"\";\nconst newPhone = $json.new_value;\n\n// replace phone line\nlet updatedDescription;\n\nif(desc.includes(\"Phone:\")){\n  updatedDescription = desc.replace(/Phone:\\s*.*/i, `Phone: ${newPhone}`);\n}else{\n  updatedDescription = `Phone: ${newPhone}\\n${desc}`;\n}\n\nreturn [{\n json:{\n   ...$json,\n   updated_description: updatedDescription\n }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1728
+      ],
+      "id": "d34ae2a3-b050-4875-8e9a-7889a1ff8d73",
+      "name": "Build Updated Description"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Your update request has been submitted for manual review.\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1520,
+        1728
+      ],
+      "id": "13f3c8e0-0264-4901-89f7-8ff081152b9a",
+      "name": "Respond to Webhook9"
+    },
+    {
+      "parameters": {
+        "jsCode": "const built = $items(\"Build Requested Slot\", 0, 0)[0].json;\nconst originalEventId = String(built.event_id || \"\");\n\nconst allEvents = items.map(item => item.json);\n\nconst conflicts = allEvents.filter(event => {\n  return String(event.id || \"\") !== originalEventId;\n});\n\nreturn [\n  {\n    json: {\n      ...built,\n      total_events_returned: allEvents.length,\n      conflict_count: conflicts.length,\n      conflict_event_ids: conflicts.map(e => e.id || \"\")\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1568,
+        1536
+      ],
+      "id": "8c9d430a-d86a-43c7-b769-ed77ff1ae169",
+      "name": "Filter Original Event"
+    },
+    {
+      "parameters": {
+        "jsCode": "\n// ═══ NORMALIZE KEYS: Retell conversation-flow sends camelCase, n8n expects snake_case ═══\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    const normalizedKey = map[key] || key;\n    result[normalizedKey] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\nconst root = $json.body ?? $json;\n// RetellAI sends args under body.args, fallback to body.parameters or body directly\nlet params = root.args || root.arguments || root.parameters || {};\nif (typeof params === 'string') { try { params = JSON.parse(params); } catch(e) { params = {}; } }\nif (!params || typeof params !== 'object' || Object.keys(params).length === 0) params = root;\nparams = normalizeRetellKeys(params);\n\nreturn [\n  {\n    json: {\n      tool_name: root.name || root.tool_name || root.function_name || \"\",\n      field_to_edit: params.field_to_edit || \"\",\n      name_on_file: params.name_on_file || \"\",\n      phone: params.phone || \"\",\n      appointment_date: params.appointment_date || \"\",\n      new_value: params.new_value || \"\"\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        1728
+      ],
+      "id": "4acf2cb3-fb36-48e1-a732-b891a1e1eb39",
+      "name": "Process Input "
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst desc = $json.description || \"\";\nconst newEmail = $json.new_value;\n\nlet updatedDescription;\n\nif (/Email:/i.test(desc)) {\n  updatedDescription = desc.replace(/Email:\\s*.*/i, `Email: ${newEmail}`);\n} else {\n  updatedDescription = desc + `\\nEmail: ${newEmail}`;\n}\n\nreturn [{\n  json: {\n    ...$json,\n    updated_description: updatedDescription\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        896,
+        1920
+      ],
+      "id": "354f7217-27a7-4bdb-a7f5-692569b8752f",
+      "name": "Build Updated Description1"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Your update request has been submitted for manual review.\" }",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1536,
+        1920
+      ],
+      "id": "e7ac6eb1-168a-42a9-a1a2-9096c1a7e466",
+      "name": "Respond to Webhook10"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "9b6df534aa2c75b7788567b801caca3b4f38ca72690153b68e450218624d89f9@group.calendar.google.com",
+          "mode": "list",
+          "cachedResultName": "Georgetown Marketplace Dental"
+        },
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        448,
+        1920
+      ],
+      "id": "ac5594de-3d42-4fc0-a0ff-1ac6ffa47e0c",
+      "name": "Connect Email Branch",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "FdkdxCLOkbQhDsAA",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "\nconst input = $('Process Input ').first().json;\nconst items = $input.all();\n\nconst name = String(input.name_on_file || \"\").toLowerCase().trim();\nconst phone = String(input.phone || \"\").replace(/\\D/g, \"\").slice(-10);\nconst newValue = String(input.new_value || \"\").trim();\nconst appointmentDate = String(input.appointment_date || \"\").trim();\n\nconst events = items.map(item => item.json);\n\nfunction cleanPhone(str) {\n  return String(str || \"\").replace(/\\D/g, \"\").slice(-10);\n}\n\nconst now = Date.now();\nlet match = null;\n\nfor (const event of events) {\n  const future = new Date(event.start?.dateTime || event.start?.date || 0).getTime() > now;\n  if (!future) continue;\n\n  const summary = String(event.summary || \"\").toLowerCase();\n  const description = String(event.description || \"\");\n  const descPhone = cleanPhone(description);\n\n  const nameMatch = name && summary.includes(name);\n  const phoneMatch = phone && descPhone.includes(phone);\n\n  if (nameMatch || phoneMatch) {\n    // If appointment_date given, prefer that match\n    if (appointmentDate) {\n      const start = event.start?.dateTime || event.start?.date || \"\";\n      if (start.startsWith(appointmentDate)) {\n        match = event;\n        break;\n      }\n      if (!match && (nameMatch || phoneMatch)) match = event;\n    } else {\n      match = event;\n      break;\n    }\n  }\n}\n\nif (!match) {\n  return [{\n    json: {\n      success: false,\n      message: \"Appointment not found.\"\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    success: true,\n    event_id: match.id,\n    summary: match.summary,\n    description: match.description,\n    start_time: match.start?.dateTime,\n    new_value: newValue\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        1920
+      ],
+      "id": "fd86ca11-8723-433f-b358-ed8bc11c8f29",
+      "name": "Edit Logic Email"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        2304
+      ],
+      "id": "90e11503-9fbe-459c-a644-4e2a05e91bd3",
+      "name": "OTP Verification check"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══ Generate & Store OTP ═══\n// Replaces: Parse OTP Input\n// Runs on: send_otp branch (Switch output 9)\n\nconst w = $('Webhook').first().json;\n\n// ─── Param extractor (same as your existing one) ───\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body,\n    w\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(w));\nconst phone = (params.phone || \"\").trim().replace(/^\\+/, '');\n\nif (!phone) {\n  throw new Error(\"Phone number is required for OTP\");\n}\n\n// ─── Generate 6-digit code ───\nconst code = String(Math.floor(100000 + Math.random() * 900000));\n\n// ─── Timestamps ───\nconst now = new Date();\nconst expiresAt = new Date(now.getTime() + 5 * 60 * 1000); // 5 minutes from now\nreturn [{\n  json: {\n    phone,\n    phone_e164: phone.startsWith('+') ? phone : '+' + phone,\n    code,\n    created_at: now.toISOString(),\n    expires_at: expiresAt.toISOString(),\n    attempts: 0,\n    sms_body: `Your Marketplace Dental verification code is: ${code}. It expires in 5 minutes.`\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        2112
+      ],
+      "id": "dbd2b890-2cac-407b-9b86-0a4fe2fda680",
+      "name": "Generate & Store OTP",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"message\": \"Verification code sent\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        672,
+        2112
+      ],
+      "id": "cfe1ed43-aea7-470e-8dd0-54811c71ff79",
+      "name": "Respond to Webhook11"
+    },
+    {
+      "parameters": {
+        "jsCode": "// ═══ Parse Verification Input ═══\n// Replaces: Parse Verification Input\n// Runs on: verify_otp branch (Switch output 10)\n\nconst w = $('Webhook').first().json;\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch(e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    otpCode: 'otp_code',\n    otp_code: 'otp_code',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = (value === null || value === undefined) ? \"\" : value;\n  }\n  return result;\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(w));\nconst phone = (params.phone || \"\").trim().replace(/^\\+/, '');\nconst otp_code = (params.otp_code || \"\").trim();\n\nif (!phone || !otp_code) {\n  throw new Error(\"Phone and OTP code are both required\");\n}\n\nreturn [{ json: { phone, otp_code } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        2304
+      ],
+      "id": "af84bd61-0012-46a8-999d-f68530c84b06",
+      "name": "Parse & Lookup OTP"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM",
+          "mode": "list",
+          "cachedResultName": "OTP Gen",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "phone",
+              "lookupValue": "={{ $json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        2304
+      ],
+      "id": "d0ff5351-e197-4d42-8ce0-9921b152c336",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5wP8OxsUNjUy2Qde",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const callerCode = $('Parse & Lookup OTP').first().json.otp_code;\nconst phone = $('Parse & Lookup OTP').first().json.phone.replace(/^\\+/, '');\n\nconst rows = $input.all().map(item => item.json);\n\nif (!rows || rows.length === 0) {\n  return [{\n    json: {\n      verified: false,\n      message: \"No verification code found for this number. Please request a new one.\"\n    }\n  }];\n}\n\n// Find the most recent OTP for this phone\nconst sorted = rows\n  .filter(r => String(r.phone).trim() === String(phone).trim())\n  .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));\n\nif (sorted.length === 0) {\n  return [{\n    json: {\n      verified: false,\n      message: \"No verification code found for this number.\"\n    }\n  }];\n}\n\nconst latest = sorted[0];\nconst now = new Date();\nconst expiresAt = new Date(latest.expires_at);\nconst attempts = parseInt(latest.attempts || \"0\", 10);\n\n// Check if locked out (3+ failed attempts)\nif (attempts >= 3) {\n  return [{\n    json: {\n      verified: false,\n      locked: true,\n      message: \"Too many failed attempts. Please request a new code.\"\n    }\n  }];\n}\n\n// Check expiry\nif (now > expiresAt) {\n  return [{\n    json: {\n      verified: false,\n      message: \"That code has expired. Please request a new one.\"\n    }\n  }];\n}\n\n// Compare codes\nconst storedCode = String(latest.code).trim();\nconst providedCode = String(callerCode).trim();\n\nif (storedCode === providedCode) {\n  return [{\n    json: {\n      verified: true,\n      message: \"Phone number verified\",\n      row_number: latest.row_number || latest.__row || null\n    }\n  }];\n} else {\n  return [{\n    json: {\n      verified: false,\n      attempts: attempts + 1,\n      phone: phone,\n      message: `Incorrect code. You have ${2 - attempts} attempt${2 - attempts === 1 ? '' : 's'} left.`\n    }\n  }];\n}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        2304
+      ],
+      "id": "1a2f8524-0279-494f-9220-f59bd918c059",
+      "name": "Verify OTP"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM",
+          "mode": "list",
+          "cachedResultName": "OTP Gen",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/14jdad1nBnq77I-zUgxyDAqrp139UDuwfCtU3RvObxKM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "phone": "={{ $json.phone }}",
+            "code": "={{ $json.code }}",
+            "created_at": "={{ $json.created_at }}",
+            "expires_at": "={{ $json.expires_at }}",
+            "attempts": "={{ $json.attempts }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "code",
+              "displayName": "code",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "expires_at",
+              "displayName": "expires_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "attempts",
+              "displayName": "attempts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        2112
+      ],
+      "id": "f4a64b01-8dd6-4998-8784-049c83dea0ff",
+      "name": "Append row in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5wP8OxsUNjUy2Qde",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "Grace's Brain\n",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        752
+      ],
+      "id": "40c7a7fe-7ab9-4575-8c1d-636bcda8e8a0",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "OTP Handling\n",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1920
+      ],
+      "id": "111c4ec0-0733-4685-b7c6-3856a659c5cd",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "Edit Function",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        1552
+      ],
+      "id": "a878959a-9216-4970-a123-fc76a3462a68",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "Main functions",
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        1296
+      ],
+      "id": "5c535e04-fc6d-4a1d-b806-e573a555a27f",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "from": "+1 431 830 9553",
+        "to": "=={{ '+1' + $json.phone }}",
+        "message": "={{ $('Generate & Store OTP').first().json.sms_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [
+        448,
+        2112
+      ],
+      "id": "666f6647-7b98-4f55-8f92-0ae2715be0a0",
+      "name": "Send an SMS/MMS/WhatsApp message",
+      "credentials": {
+        "twilioApi": {
+          "id": "HvzZWl8bdL4Z628J",
+          "name": "Twilio account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json || {};\nconst webhook = $('Webhook').first().json || {};\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = value ?? \"\";\n  }\n  return result;\n}\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch (e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction nonEmpty(...values) {\n  for (const value of values) {\n    if (value !== undefined && value !== null && String(value).trim() !== \"\") {\n      return String(value).trim();\n    }\n  }\n  return \"\";\n}\n\nfunction extractLineField(text, label) {\n  const match = String(text || \"\").match(new RegExp(label + \":\\\\s*(.+)$\", \"im\"));\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractNameFromSummary(summary) {\n  const raw = String(summary || \"\").trim();\n  if (!raw) return \"\";\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (raw.includes(separator)) {\n      return raw.split(separator)[0].trim();\n    }\n  }\n  return raw;\n}\n\nfunction splitFullName(fullName) {\n  const parts = String(fullName || \"\").trim().split(/\\s+/).filter(Boolean);\n  if (parts.length === 0) return { first_name: \"\", last_name: \"\" };\n  if (parts.length === 1) return { first_name: parts[0], last_name: \"\" };\n  return {\n    first_name: parts[0],\n    last_name: parts.slice(1).join(\" \")\n  };\n}\n\nfunction splitDateTime(iso) {\n  if (!iso) return { requested_date: \"\", requested_time: \"\" };\n  const d = new Date(iso);\n  if (isNaN(d)) return { requested_date: \"\", requested_time: \"\" };\n  return {\n    requested_date: d.toISOString().slice(0, 10),\n    requested_time: d.toLocaleTimeString(\"en-CA\", {\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true,\n      timeZone: \"America/Toronto\"\n    })\n  };\n}\n\nfunction inferRequestType() {\n  const explicit = nonEmpty(\n    body.request_type,\n    body.type,\n    body.action,\n    webhook.body?.name,\n    webhook.name,\n    webhook.function_name,\n    webhook.tool_name\n  ).toLowerCase();\n\n  if (explicit.includes(\"reschedule\")) return \"reschedule\";\n  if (explicit.includes(\"edit\")) return \"edit\";\n  if (explicit.includes(\"cancel\")) return \"cancel\";\n  if (explicit.includes(\"book\")) return \"book\";\n\n  if (body.event_id && body.new_start) return \"reschedule\";\n  if (body.event_id && body.updated_description) return \"edit\";\n  if (body.event_id) return \"cancel\";\n  return \"book\";\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(webhook));\nconst requestType = inferRequestType();\nconst description = nonEmpty(body.updated_description, body.description);\nconst summary = nonEmpty(body.summary, body.event_summary);\n\nconst fullName = nonEmpty(\n  body.full_name,\n  params.full_name,\n  params.name_on_file,\n  extractNameFromSummary(summary),\n  [params.first_name, params.last_name].filter(Boolean).join(\" \")\n);\n\nconst nameParts = splitFullName(fullName);\nconst firstName = nonEmpty(body.first_name, params.first_name, nameParts.first_name);\nconst lastName = nonEmpty(body.last_name, params.last_name, nameParts.last_name);\n\nconst phone = nonEmpty(body.phone, params.phone, extractLineField(description, \"Phone\"));\nconst email = nonEmpty(body.email, params.email, extractLineField(description, \"Email\"));\n\nlet reason = nonEmpty(\n  body.reason,\n  params.reason,\n  extractLineField(description, \"Reason\")\n);\n\nif (!reason && summary) {\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (summary.includes(separator)) {\n      reason = summary.split(separator).slice(1).join(separator).trim();\n      break;\n    }\n  }\n}\n\nif (!reason && requestType === \"edit\" && nonEmpty(params.field_to_edit, body.field_to_edit) === \"reason\") {\n  reason = nonEmpty(body.new_value, params.new_value);\n}\n\nconst existingDateTime = nonEmpty(\n  body.old_start,\n  body.start_time,\n  body.existing_appointment_datetime,\n  params.old_datetime,\n  params.appointment_datetime\n);\n\nconst requestedDateTime = nonEmpty(\n  body.new_start,\n  body.appointment_datetime,\n  body.requested_datetime,\n  body.new_datetime,\n  body.start_time,\n  body.old_start,\n  params.new_datetime,\n  params.requested_datetime,\n  params.appointment_datetime,\n  params.old_datetime\n);\n\nconst split = splitDateTime(requestedDateTime || existingDateTime);\n\nlet notes = nonEmpty(body.notes);\n\nif (!notes && requestType === \"edit\") {\n  const field = nonEmpty(params.field_to_edit, body.field_to_edit);\n  const value = nonEmpty(body.new_value, params.new_value);\n  if (field && value) notes = \"Requested \" + field + \" change to: \" + value;\n}\n\nif (!notes && requestType === \"cancel\" && body.cancelled_label) {\n  notes = \"Caller requested cancellation for \" + body.cancelled_label;\n}\n\nconst callId =\n  webhook.body?.call_id ||\n  webhook.call_id ||\n  webhook.body?.call?.id ||\n  \"\";\n\nconst submittedAt = new Date().toISOString();\n\nconst defaultSummary = {\n  book: \"Booking request submitted for manual review.\",\n  reschedule: \"Reschedule request submitted for manual review.\",\n  edit: \"Edit request submitted for manual review.\",\n  cancel: \"Cancellation request submitted for manual review.\"\n};\n\nreturn [\n  {\n    json: {\n      clinic_id: \"marketplace-dental-centre\",\n      location_name: \"Marketplace Dental Centre\",\n      request_type: requestType,\n      status: \"pending\",\n      patient: {\n        first_name: firstName,\n        last_name: lastName,\n        full_name: [firstName, lastName].filter(Boolean).join(\" \"),\n        phone,\n        email\n      },\n      request_details: {\n        reason,\n        requested_datetime: requestedDateTime || existingDateTime,\n        requested_date: split.requested_date,\n        requested_time: split.requested_time,\n        duration_minutes: body.duration_minutes || params.duration_minutes || 60,\n        existing_appointment_id: body.event_id || \"\",\n        existing_appointment_datetime: existingDateTime\n      },\n      ai_call_summary: defaultSummary[requestType] || \"Manual request submitted for review.\",\n      submission_info: {\n        submitted_at: submittedAt,\n        call_id: callId,\n        source: \"n8n\",\n        manual_action_required: true\n      },\n      notes,\n      raw_payload: {\n        webhook_params: params,\n        branch_output: body\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        192
+      ],
+      "id": "652ed4ca-f5f2-4d37-bf80-2fcfe25dc036",
+      "name": "Build Payload For Website"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        432,
+        192
+      ],
+      "id": "aaa51d00-7af9-4b75-97aa-84435eb0ded1",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        688,
+        576
+      ],
+      "id": "e356d8ae-52ef-4c10-9f3a-16e7a7a3cb60",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json || {};\nconst webhook = $('Webhook').first().json || {};\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = value ?? \"\";\n  }\n  return result;\n}\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch (e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction nonEmpty(...values) {\n  for (const value of values) {\n    if (value !== undefined && value !== null && String(value).trim() !== \"\") {\n      return String(value).trim();\n    }\n  }\n  return \"\";\n}\n\nfunction extractLineField(text, label) {\n  const match = String(text || \"\").match(new RegExp(label + \":\\\\s*(.+)$\", \"im\"));\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractNameFromSummary(summary) {\n  const raw = String(summary || \"\").trim();\n  if (!raw) return \"\";\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (raw.includes(separator)) {\n      return raw.split(separator)[0].trim();\n    }\n  }\n  return raw;\n}\n\nfunction splitFullName(fullName) {\n  const parts = String(fullName || \"\").trim().split(/\\s+/).filter(Boolean);\n  if (parts.length === 0) return { first_name: \"\", last_name: \"\" };\n  if (parts.length === 1) return { first_name: parts[0], last_name: \"\" };\n  return {\n    first_name: parts[0],\n    last_name: parts.slice(1).join(\" \")\n  };\n}\n\nfunction splitDateTime(iso) {\n  if (!iso) return { requested_date: \"\", requested_time: \"\" };\n  const d = new Date(iso);\n  if (isNaN(d)) return { requested_date: \"\", requested_time: \"\" };\n  return {\n    requested_date: d.toISOString().slice(0, 10),\n    requested_time: d.toLocaleTimeString(\"en-CA\", {\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true,\n      timeZone: \"America/Toronto\"\n    })\n  };\n}\n\nfunction inferRequestType() {\n  const explicit = nonEmpty(\n    body.request_type,\n    body.type,\n    body.action,\n    webhook.body?.name,\n    webhook.name,\n    webhook.function_name,\n    webhook.tool_name\n  ).toLowerCase();\n\n  if (explicit.includes(\"reschedule\")) return \"reschedule\";\n  if (explicit.includes(\"edit\")) return \"edit\";\n  if (explicit.includes(\"cancel\")) return \"cancel\";\n  if (explicit.includes(\"book\")) return \"book\";\n\n  if (body.event_id && body.new_start) return \"reschedule\";\n  if (body.event_id && body.updated_description) return \"edit\";\n  if (body.event_id) return \"cancel\";\n  return \"book\";\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(webhook));\nconst requestType = inferRequestType();\nconst description = nonEmpty(body.updated_description, body.description);\nconst summary = nonEmpty(body.summary, body.event_summary);\n\nconst fullName = nonEmpty(\n  body.full_name,\n  params.full_name,\n  params.name_on_file,\n  extractNameFromSummary(summary),\n  [params.first_name, params.last_name].filter(Boolean).join(\" \")\n);\n\nconst nameParts = splitFullName(fullName);\nconst firstName = nonEmpty(body.first_name, params.first_name, nameParts.first_name);\nconst lastName = nonEmpty(body.last_name, params.last_name, nameParts.last_name);\n\nconst phone = nonEmpty(body.phone, params.phone, extractLineField(description, \"Phone\"));\nconst email = nonEmpty(body.email, params.email, extractLineField(description, \"Email\"));\n\nlet reason = nonEmpty(\n  body.reason,\n  params.reason,\n  extractLineField(description, \"Reason\")\n);\n\nif (!reason && summary) {\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (summary.includes(separator)) {\n      reason = summary.split(separator).slice(1).join(separator).trim();\n      break;\n    }\n  }\n}\n\nif (!reason && requestType === \"edit\" && nonEmpty(params.field_to_edit, body.field_to_edit) === \"reason\") {\n  reason = nonEmpty(body.new_value, params.new_value);\n}\n\nconst existingDateTime = nonEmpty(\n  body.old_start,\n  body.start_time,\n  body.existing_appointment_datetime,\n  params.old_datetime,\n  params.appointment_datetime\n);\n\nconst requestedDateTime = nonEmpty(\n  body.new_start,\n  body.appointment_datetime,\n  body.requested_datetime,\n  body.new_datetime,\n  body.start_time,\n  body.old_start,\n  params.new_datetime,\n  params.requested_datetime,\n  params.appointment_datetime,\n  params.old_datetime\n);\n\nconst split = splitDateTime(requestedDateTime || existingDateTime);\n\nlet notes = nonEmpty(body.notes);\n\nif (!notes && requestType === \"edit\") {\n  const field = nonEmpty(params.field_to_edit, body.field_to_edit);\n  const value = nonEmpty(body.new_value, params.new_value);\n  if (field && value) notes = \"Requested \" + field + \" change to: \" + value;\n}\n\nif (!notes && requestType === \"cancel\" && body.cancelled_label) {\n  notes = \"Caller requested cancellation for \" + body.cancelled_label;\n}\n\nconst callId =\n  webhook.body?.call_id ||\n  webhook.call_id ||\n  webhook.body?.call?.id ||\n  \"\";\n\nconst submittedAt = new Date().toISOString();\n\nconst defaultSummary = {\n  book: \"Booking request submitted for manual review.\",\n  reschedule: \"Reschedule request submitted for manual review.\",\n  edit: \"Edit request submitted for manual review.\",\n  cancel: \"Cancellation request submitted for manual review.\"\n};\n\nreturn [\n  {\n    json: {\n      clinic_id: \"marketplace-dental-centre\",\n      location_name: \"Marketplace Dental Centre\",\n      request_type: requestType,\n      status: \"pending\",\n      patient: {\n        first_name: firstName,\n        last_name: lastName,\n        full_name: [firstName, lastName].filter(Boolean).join(\" \"),\n        phone,\n        email\n      },\n      request_details: {\n        reason,\n        requested_datetime: requestedDateTime || existingDateTime,\n        requested_date: split.requested_date,\n        requested_time: split.requested_time,\n        duration_minutes: body.duration_minutes || params.duration_minutes || 60,\n        existing_appointment_id: body.event_id || \"\",\n        existing_appointment_datetime: existingDateTime\n      },\n      ai_call_summary: defaultSummary[requestType] || \"Manual request submitted for review.\",\n      submission_info: {\n        submitted_at: submittedAt,\n        call_id: callId,\n        source: \"n8n\",\n        manual_action_required: true\n      },\n      notes,\n      raw_payload: {\n        webhook_params: params,\n        branch_output: body\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        576
+      ],
+      "id": "1d7bfaca-4d83-4fbc-a38c-21e0f56482d2",
+      "name": "Build Payload For Website1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1344,
+        1920
+      ],
+      "id": "b8a84e64-804a-4245-b299-fca965aef26a",
+      "name": "HTTP Request2"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json || {};\nconst webhook = $('Webhook').first().json || {};\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = value ?? \"\";\n  }\n  return result;\n}\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch (e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction nonEmpty(...values) {\n  for (const value of values) {\n    if (value !== undefined && value !== null && String(value).trim() !== \"\") {\n      return String(value).trim();\n    }\n  }\n  return \"\";\n}\n\nfunction extractLineField(text, label) {\n  const match = String(text || \"\").match(new RegExp(label + \":\\\\s*(.+)$\", \"im\"));\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractNameFromSummary(summary) {\n  const raw = String(summary || \"\").trim();\n  if (!raw) return \"\";\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (raw.includes(separator)) {\n      return raw.split(separator)[0].trim();\n    }\n  }\n  return raw;\n}\n\nfunction splitFullName(fullName) {\n  const parts = String(fullName || \"\").trim().split(/\\s+/).filter(Boolean);\n  if (parts.length === 0) return { first_name: \"\", last_name: \"\" };\n  if (parts.length === 1) return { first_name: parts[0], last_name: \"\" };\n  return {\n    first_name: parts[0],\n    last_name: parts.slice(1).join(\" \")\n  };\n}\n\nfunction splitDateTime(iso) {\n  if (!iso) return { requested_date: \"\", requested_time: \"\" };\n  const d = new Date(iso);\n  if (isNaN(d)) return { requested_date: \"\", requested_time: \"\" };\n  return {\n    requested_date: d.toISOString().slice(0, 10),\n    requested_time: d.toLocaleTimeString(\"en-CA\", {\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true,\n      timeZone: \"America/Toronto\"\n    })\n  };\n}\n\nfunction inferRequestType() {\n  const explicit = nonEmpty(\n    body.request_type,\n    body.type,\n    body.action,\n    webhook.body?.name,\n    webhook.name,\n    webhook.function_name,\n    webhook.tool_name\n  ).toLowerCase();\n\n  if (explicit.includes(\"reschedule\")) return \"reschedule\";\n  if (explicit.includes(\"edit\")) return \"edit\";\n  if (explicit.includes(\"cancel\")) return \"cancel\";\n  if (explicit.includes(\"book\")) return \"book\";\n\n  if (body.event_id && body.new_start) return \"reschedule\";\n  if (body.event_id && body.updated_description) return \"edit\";\n  if (body.event_id) return \"cancel\";\n  return \"book\";\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(webhook));\nconst requestType = inferRequestType();\nconst description = nonEmpty(body.updated_description, body.description);\nconst summary = nonEmpty(body.summary, body.event_summary);\n\nconst fullName = nonEmpty(\n  body.full_name,\n  params.full_name,\n  params.name_on_file,\n  extractNameFromSummary(summary),\n  [params.first_name, params.last_name].filter(Boolean).join(\" \")\n);\n\nconst nameParts = splitFullName(fullName);\nconst firstName = nonEmpty(body.first_name, params.first_name, nameParts.first_name);\nconst lastName = nonEmpty(body.last_name, params.last_name, nameParts.last_name);\n\nconst phone = nonEmpty(body.phone, params.phone, extractLineField(description, \"Phone\"));\nconst email = nonEmpty(body.email, params.email, extractLineField(description, \"Email\"));\n\nlet reason = nonEmpty(\n  body.reason,\n  params.reason,\n  extractLineField(description, \"Reason\")\n);\n\nif (!reason && summary) {\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (summary.includes(separator)) {\n      reason = summary.split(separator).slice(1).join(separator).trim();\n      break;\n    }\n  }\n}\n\nif (!reason && requestType === \"edit\" && nonEmpty(params.field_to_edit, body.field_to_edit) === \"reason\") {\n  reason = nonEmpty(body.new_value, params.new_value);\n}\n\nconst existingDateTime = nonEmpty(\n  body.old_start,\n  body.start_time,\n  body.existing_appointment_datetime,\n  params.old_datetime,\n  params.appointment_datetime\n);\n\nconst requestedDateTime = nonEmpty(\n  body.new_start,\n  body.appointment_datetime,\n  body.requested_datetime,\n  body.new_datetime,\n  body.start_time,\n  body.old_start,\n  params.new_datetime,\n  params.requested_datetime,\n  params.appointment_datetime,\n  params.old_datetime\n);\n\nconst split = splitDateTime(requestedDateTime || existingDateTime);\n\nlet notes = nonEmpty(body.notes);\n\nif (!notes && requestType === \"edit\") {\n  const field = nonEmpty(params.field_to_edit, body.field_to_edit);\n  const value = nonEmpty(body.new_value, params.new_value);\n  if (field && value) notes = \"Requested \" + field + \" change to: \" + value;\n}\n\nif (!notes && requestType === \"cancel\" && body.cancelled_label) {\n  notes = \"Caller requested cancellation for \" + body.cancelled_label;\n}\n\nconst callId =\n  webhook.body?.call_id ||\n  webhook.call_id ||\n  webhook.body?.call?.id ||\n  \"\";\n\nconst submittedAt = new Date().toISOString();\n\nconst defaultSummary = {\n  book: \"Booking request submitted for manual review.\",\n  reschedule: \"Reschedule request submitted for manual review.\",\n  edit: \"Edit request submitted for manual review.\",\n  cancel: \"Cancellation request submitted for manual review.\"\n};\n\nreturn [\n  {\n    json: {\n      clinic_id: \"marketplace-dental-centre\",\n      location_name: \"Marketplace Dental Centre\",\n      request_type: requestType,\n      status: \"pending\",\n      patient: {\n        first_name: firstName,\n        last_name: lastName,\n        full_name: [firstName, lastName].filter(Boolean).join(\" \"),\n        phone,\n        email\n      },\n      request_details: {\n        reason,\n        requested_datetime: requestedDateTime || existingDateTime,\n        requested_date: split.requested_date,\n        requested_time: split.requested_time,\n        duration_minutes: body.duration_minutes || params.duration_minutes || 60,\n        existing_appointment_id: body.event_id || \"\",\n        existing_appointment_datetime: existingDateTime\n      },\n      ai_call_summary: defaultSummary[requestType] || \"Manual request submitted for review.\",\n      submission_info: {\n        submitted_at: submittedAt,\n        call_id: callId,\n        source: \"n8n\",\n        manual_action_required: true\n      },\n      notes,\n      raw_payload: {\n        webhook_params: params,\n        branch_output: body\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        1920
+      ],
+      "id": "b78203d5-b0b4-45f9-a533-0f2e2189c33c",
+      "name": "Build Payload For Website2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1328,
+        1728
+      ],
+      "id": "92833dca-9272-41f6-8eee-34c548c407d6",
+      "name": "HTTP Request3"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json || {};\nconst webhook = $('Webhook').first().json || {};\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = value ?? \"\";\n  }\n  return result;\n}\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch (e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction nonEmpty(...values) {\n  for (const value of values) {\n    if (value !== undefined && value !== null && String(value).trim() !== \"\") {\n      return String(value).trim();\n    }\n  }\n  return \"\";\n}\n\nfunction extractLineField(text, label) {\n  const match = String(text || \"\").match(new RegExp(label + \":\\\\s*(.+)$\", \"im\"));\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractNameFromSummary(summary) {\n  const raw = String(summary || \"\").trim();\n  if (!raw) return \"\";\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (raw.includes(separator)) {\n      return raw.split(separator)[0].trim();\n    }\n  }\n  return raw;\n}\n\nfunction splitFullName(fullName) {\n  const parts = String(fullName || \"\").trim().split(/\\s+/).filter(Boolean);\n  if (parts.length === 0) return { first_name: \"\", last_name: \"\" };\n  if (parts.length === 1) return { first_name: parts[0], last_name: \"\" };\n  return {\n    first_name: parts[0],\n    last_name: parts.slice(1).join(\" \")\n  };\n}\n\nfunction splitDateTime(iso) {\n  if (!iso) return { requested_date: \"\", requested_time: \"\" };\n  const d = new Date(iso);\n  if (isNaN(d)) return { requested_date: \"\", requested_time: \"\" };\n  return {\n    requested_date: d.toISOString().slice(0, 10),\n    requested_time: d.toLocaleTimeString(\"en-CA\", {\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true,\n      timeZone: \"America/Toronto\"\n    })\n  };\n}\n\nfunction inferRequestType() {\n  const explicit = nonEmpty(\n    body.request_type,\n    body.type,\n    body.action,\n    webhook.body?.name,\n    webhook.name,\n    webhook.function_name,\n    webhook.tool_name\n  ).toLowerCase();\n\n  if (explicit.includes(\"reschedule\")) return \"reschedule\";\n  if (explicit.includes(\"edit\")) return \"edit\";\n  if (explicit.includes(\"cancel\")) return \"cancel\";\n  if (explicit.includes(\"book\")) return \"book\";\n\n  if (body.event_id && body.new_start) return \"reschedule\";\n  if (body.event_id && body.updated_description) return \"edit\";\n  if (body.event_id) return \"cancel\";\n  return \"book\";\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(webhook));\nconst requestType = inferRequestType();\nconst description = nonEmpty(body.updated_description, body.description);\nconst summary = nonEmpty(body.summary, body.event_summary);\n\nconst fullName = nonEmpty(\n  body.full_name,\n  params.full_name,\n  params.name_on_file,\n  extractNameFromSummary(summary),\n  [params.first_name, params.last_name].filter(Boolean).join(\" \")\n);\n\nconst nameParts = splitFullName(fullName);\nconst firstName = nonEmpty(body.first_name, params.first_name, nameParts.first_name);\nconst lastName = nonEmpty(body.last_name, params.last_name, nameParts.last_name);\n\nconst phone = nonEmpty(body.phone, params.phone, extractLineField(description, \"Phone\"));\nconst email = nonEmpty(body.email, params.email, extractLineField(description, \"Email\"));\n\nlet reason = nonEmpty(\n  body.reason,\n  params.reason,\n  extractLineField(description, \"Reason\")\n);\n\nif (!reason && summary) {\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (summary.includes(separator)) {\n      reason = summary.split(separator).slice(1).join(separator).trim();\n      break;\n    }\n  }\n}\n\nif (!reason && requestType === \"edit\" && nonEmpty(params.field_to_edit, body.field_to_edit) === \"reason\") {\n  reason = nonEmpty(body.new_value, params.new_value);\n}\n\nconst existingDateTime = nonEmpty(\n  body.old_start,\n  body.start_time,\n  body.existing_appointment_datetime,\n  params.old_datetime,\n  params.appointment_datetime\n);\n\nconst requestedDateTime = nonEmpty(\n  body.new_start,\n  body.appointment_datetime,\n  body.requested_datetime,\n  body.new_datetime,\n  body.start_time,\n  body.old_start,\n  params.new_datetime,\n  params.requested_datetime,\n  params.appointment_datetime,\n  params.old_datetime\n);\n\nconst split = splitDateTime(requestedDateTime || existingDateTime);\n\nlet notes = nonEmpty(body.notes);\n\nif (!notes && requestType === \"edit\") {\n  const field = nonEmpty(params.field_to_edit, body.field_to_edit);\n  const value = nonEmpty(body.new_value, params.new_value);\n  if (field && value) notes = \"Requested \" + field + \" change to: \" + value;\n}\n\nif (!notes && requestType === \"cancel\" && body.cancelled_label) {\n  notes = \"Caller requested cancellation for \" + body.cancelled_label;\n}\n\nconst callId =\n  webhook.body?.call_id ||\n  webhook.call_id ||\n  webhook.body?.call?.id ||\n  \"\";\n\nconst submittedAt = new Date().toISOString();\n\nconst defaultSummary = {\n  book: \"Booking request submitted for manual review.\",\n  reschedule: \"Reschedule request submitted for manual review.\",\n  edit: \"Edit request submitted for manual review.\",\n  cancel: \"Cancellation request submitted for manual review.\"\n};\n\nreturn [\n  {\n    json: {\n      clinic_id: \"marketplace-dental-centre\",\n      location_name: \"Marketplace Dental Centre\",\n      request_type: requestType,\n      status: \"pending\",\n      patient: {\n        first_name: firstName,\n        last_name: lastName,\n        full_name: [firstName, lastName].filter(Boolean).join(\" \"),\n        phone,\n        email\n      },\n      request_details: {\n        reason,\n        requested_datetime: requestedDateTime || existingDateTime,\n        requested_date: split.requested_date,\n        requested_time: split.requested_time,\n        duration_minutes: body.duration_minutes || params.duration_minutes || 60,\n        existing_appointment_id: body.event_id || \"\",\n        existing_appointment_datetime: existingDateTime\n      },\n      ai_call_summary: defaultSummary[requestType] || \"Manual request submitted for review.\",\n      submission_info: {\n        submitted_at: submittedAt,\n        call_id: callId,\n        source: \"n8n\",\n        manual_action_required: true\n      },\n      notes,\n      raw_payload: {\n        webhook_params: params,\n        branch_output: body\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1088,
+        1728
+      ],
+      "id": "227e50b8-94c4-4fde-96b1-57a866d1a5d5",
+      "name": "Build Payload For Website3"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:3000/api/requests",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2272,
+        1424
+      ],
+      "id": "4d316ad0-82c8-4c7e-846a-e4d71606627e",
+      "name": "HTTP Request4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json || {};\nconst webhook = $('Webhook').first().json || {};\n\nfunction normalizeRetellKeys(obj) {\n  if (!obj || typeof obj !== 'object') return obj;\n  const map = {\n    requestedDate: 'requested_date',\n    requestedDatetime: 'requested_datetime',\n    requested_datetime: 'requested_datetime',\n    requested_date: 'requested_date',\n    timePreference: 'time_preference',\n    time_preference: 'time_preference',\n    timePrefernce: 'time_preference',\n    appointmentDatetime: 'appointment_datetime',\n    appointment_datetime: 'appointment_datetime',\n    durationMinutes: 'duration_minutes',\n    duration_minutes: 'duration_minutes',\n    nameOnFile: 'name_on_file',\n    name_on_file: 'name_on_file',\n    firstName: 'first_name',\n    first_name: 'first_name',\n    lastName: 'last_name',\n    last_name: 'last_name',\n    fieldToEdit: 'field_to_edit',\n    field_to_edit: 'field_to_edit',\n    newValue: 'new_value',\n    new_value: 'new_value',\n    appointmentDate: 'appointment_date',\n    appointment_date: 'appointment_date',\n    oldDatetime: 'old_datetime',\n    old_datetime: 'old_datetime',\n    newDatetime: 'new_datetime',\n    new_datetime: 'new_datetime',\n  };\n  const result = {};\n  for (const [key, value] of Object.entries(obj)) {\n    result[map[key] || key] = value ?? \"\";\n  }\n  return result;\n}\n\nfunction extractRetellParams(webhookJson) {\n  const w = webhookJson || {};\n  const candidates = [\n    w.body?.args,\n    w.body?.arguments,\n    w.body?.parameters,\n    w.arguments,\n    w.parameters,\n    w.args,\n    w.body\n  ];\n  for (let c of candidates) {\n    if (!c) continue;\n    if (typeof c === 'string') {\n      try { c = JSON.parse(c); } catch (e) { continue; }\n    }\n    if (c && typeof c === 'object' && Object.keys(c).length > 0) return c;\n  }\n  return {};\n}\n\nfunction nonEmpty(...values) {\n  for (const value of values) {\n    if (value !== undefined && value !== null && String(value).trim() !== \"\") {\n      return String(value).trim();\n    }\n  }\n  return \"\";\n}\n\nfunction extractLineField(text, label) {\n  const match = String(text || \"\").match(new RegExp(label + \":\\\\s*(.+)$\", \"im\"));\n  return match ? match[1].trim() : \"\";\n}\n\nfunction extractNameFromSummary(summary) {\n  const raw = String(summary || \"\").trim();\n  if (!raw) return \"\";\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (raw.includes(separator)) {\n      return raw.split(separator)[0].trim();\n    }\n  }\n  return raw;\n}\n\nfunction splitFullName(fullName) {\n  const parts = String(fullName || \"\").trim().split(/\\s+/).filter(Boolean);\n  if (parts.length === 0) return { first_name: \"\", last_name: \"\" };\n  if (parts.length === 1) return { first_name: parts[0], last_name: \"\" };\n  return {\n    first_name: parts[0],\n    last_name: parts.slice(1).join(\" \")\n  };\n}\n\nfunction splitDateTime(iso) {\n  if (!iso) return { requested_date: \"\", requested_time: \"\" };\n  const d = new Date(iso);\n  if (isNaN(d)) return { requested_date: \"\", requested_time: \"\" };\n  return {\n    requested_date: d.toISOString().slice(0, 10),\n    requested_time: d.toLocaleTimeString(\"en-CA\", {\n      hour: \"numeric\",\n      minute: \"2-digit\",\n      hour12: true,\n      timeZone: \"America/Toronto\"\n    })\n  };\n}\n\nfunction inferRequestType() {\n  const explicit = nonEmpty(\n    body.request_type,\n    body.type,\n    body.action,\n    webhook.body?.name,\n    webhook.name,\n    webhook.function_name,\n    webhook.tool_name\n  ).toLowerCase();\n\n  if (explicit.includes(\"reschedule\")) return \"reschedule\";\n  if (explicit.includes(\"edit\")) return \"edit\";\n  if (explicit.includes(\"cancel\")) return \"cancel\";\n  if (explicit.includes(\"book\")) return \"book\";\n\n  if (body.event_id && body.new_start) return \"reschedule\";\n  if (body.event_id && body.updated_description) return \"edit\";\n  if (body.event_id) return \"cancel\";\n  return \"book\";\n}\n\nconst params = normalizeRetellKeys(extractRetellParams(webhook));\nconst requestType = inferRequestType();\nconst description = nonEmpty(body.updated_description, body.description);\nconst summary = nonEmpty(body.summary, body.event_summary);\n\nconst fullName = nonEmpty(\n  body.full_name,\n  params.full_name,\n  params.name_on_file,\n  extractNameFromSummary(summary),\n  [params.first_name, params.last_name].filter(Boolean).join(\" \")\n);\n\nconst nameParts = splitFullName(fullName);\nconst firstName = nonEmpty(body.first_name, params.first_name, nameParts.first_name);\nconst lastName = nonEmpty(body.last_name, params.last_name, nameParts.last_name);\n\nconst phone = nonEmpty(body.phone, params.phone, extractLineField(description, \"Phone\"));\nconst email = nonEmpty(body.email, params.email, extractLineField(description, \"Email\"));\n\nlet reason = nonEmpty(\n  body.reason,\n  params.reason,\n  extractLineField(description, \"Reason\")\n);\n\nif (!reason && summary) {\n  const separators = [\"—\", \"-\", \"|\"];\n  for (const separator of separators) {\n    if (summary.includes(separator)) {\n      reason = summary.split(separator).slice(1).join(separator).trim();\n      break;\n    }\n  }\n}\n\nif (!reason && requestType === \"edit\" && nonEmpty(params.field_to_edit, body.field_to_edit) === \"reason\") {\n  reason = nonEmpty(body.new_value, params.new_value);\n}\n\nconst existingDateTime = nonEmpty(\n  body.old_start,\n  body.start_time,\n  body.existing_appointment_datetime,\n  params.old_datetime,\n  params.appointment_datetime\n);\n\nconst requestedDateTime = nonEmpty(\n  body.new_start,\n  body.appointment_datetime,\n  body.requested_datetime,\n  body.new_datetime,\n  body.start_time,\n  body.old_start,\n  params.new_datetime,\n  params.requested_datetime,\n  params.appointment_datetime,\n  params.old_datetime\n);\n\nconst split = splitDateTime(requestedDateTime || existingDateTime);\n\nlet notes = nonEmpty(body.notes);\n\nif (!notes && requestType === \"edit\") {\n  const field = nonEmpty(params.field_to_edit, body.field_to_edit);\n  const value = nonEmpty(body.new_value, params.new_value);\n  if (field && value) notes = \"Requested \" + field + \" change to: \" + value;\n}\n\nif (!notes && requestType === \"cancel\" && body.cancelled_label) {\n  notes = \"Caller requested cancellation for \" + body.cancelled_label;\n}\n\nconst callId =\n  webhook.body?.call_id ||\n  webhook.call_id ||\n  webhook.body?.call?.id ||\n  \"\";\n\nconst submittedAt = new Date().toISOString();\n\nconst defaultSummary = {\n  book: \"Booking request submitted for manual review.\",\n  reschedule: \"Reschedule request submitted for manual review.\",\n  edit: \"Edit request submitted for manual review.\",\n  cancel: \"Cancellation request submitted for manual review.\"\n};\n\nreturn [\n  {\n    json: {\n      clinic_id: \"marketplace-dental-centre\",\n      location_name: \"Marketplace Dental Centre\",\n      request_type: requestType,\n      status: \"pending\",\n      patient: {\n        first_name: firstName,\n        last_name: lastName,\n        full_name: [firstName, lastName].filter(Boolean).join(\" \"),\n        phone,\n        email\n      },\n      request_details: {\n        reason,\n        requested_datetime: requestedDateTime || existingDateTime,\n        requested_date: split.requested_date,\n        requested_time: split.requested_time,\n        duration_minutes: body.duration_minutes || params.duration_minutes || 60,\n        existing_appointment_id: body.event_id || \"\",\n        existing_appointment_datetime: existingDateTime\n      },\n      ai_call_summary: defaultSummary[requestType] || \"Manual request submitted for review.\",\n      submission_info: {\n        submitted_at: submittedAt,\n        call_id: callId,\n        source: \"n8n\",\n        manual_action_required: true\n      },\n      notes,\n      raw_payload: {\n        webhook_params: params,\n        branch_output: body\n      }\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2032,
+        1424
+      ],
+      "id": "8e9e7e26-1947-4b68-b032-da9aa870de72",
+      "name": "Build Payload For Website4"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{ \"success\": true, \"message\": \"Your request has been submitted for manual review.\" }",
+        "options": {}
+      },
+      "id": "respond-manual-review",
+      "name": "Respond to Webhook Manual Review",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1568,
+        1536
+      ]
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "name": "book_appointment_cal",
+          "args": {
+            "first_name": "John",
+            "last_name": "Smith",
+            "phone": "+16479260039",
+            "email": "john.smith@example.com",
+            "reason": "cleaning",
+            "appointment_datetime": "2026-04-10T10:00:00",
+            "duration_minutes": 60
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "classify reason",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process info",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Rescheduling",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Cancellation ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Appointment Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "end_call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Transfer_call",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get available slots - process input",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Process Input ",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate & Store OTP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse & Lookup OTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transfer_call": {
+      "main": [
+        [
+          {
+            "node": "Respond Transfer Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "end_call": {
+      "main": [
+        [
+          {
+            "node": "Respond End Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finder for time slots": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process info": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rescheduling": {
+      "main": [
+        [
+          {
+            "node": "Rescheduling logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rescheduling logic": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancellation ": {
+      "main": [
+        [
+          {
+            "node": "Cancel Logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancel Logic": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Appointment Lookup": {
+      "main": [
+        [
+          {
+            "node": "Lookup_logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check availability function": {
+      "main": [
+        [
+          {
+            "node": "Finder for time slots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "classify reason": {
+      "main": [
+        [
+          {
+            "node": "Check availability function",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get available slots - process input": {
+      "main": [
+        [
+          {
+            "node": "Get many events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events": {
+      "main": [
+        [
+          {
+            "node": "Finder for time slots1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finder for time slots1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup_logic": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Procedure Duration": {
+      "main": [
+        [
+          {
+            "node": "Build Requested Slot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Requested Slot": {
+      "main": [
+        [
+          {
+            "node": "Check Slot Availability",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Slot Availability": {
+      "main": [
+        [
+          {
+            "node": "Filter Original Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slot Available?": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get available slots - process input2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events2": {
+      "main": [
+        [
+          {
+            "node": "Finder for time slots2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finder for time slots2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get available slots - process input2": {
+      "main": [
+        [
+          {
+            "node": "Get many events2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Connect Reason Branch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Connect Phone Branch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Connect Email Branch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Connect Phone Branch": {
+      "main": [
+        [
+          {
+            "node": "Edit Logic Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Connect Reason Branch": {
+      "main": [
+        [
+          {
+            "node": "Edit Logic Reason",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Logic Phone": {
+      "main": [
+        [
+          {
+            "node": "Build Updated Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Logic Reason": {
+      "main": [
+        [
+          {
+            "node": "Calculate Procedure Duration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Updated Description": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Original Event": {
+      "main": [
+        [
+          {
+            "node": "Slot Available?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Input ": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Updated Description1": {
+      "main": [
+        [
+          {
+            "node": "Build Payload For Website2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Connect Email Branch": {
+      "main": [
+        [
+          {
+            "node": "Edit Logic Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Logic Email": {
+      "main": [
+        [
+          {
+            "node": "Build Updated Description1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate & Store OTP": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Lookup OTP": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Verify OTP",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify OTP": {
+      "main": [
+        [
+          {
+            "node": "OTP Verification check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Send an SMS/MMS/WhatsApp message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send an SMS/MMS/WhatsApp message": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook11",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload For Website": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload For Website1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload For Website2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload For Website3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request3": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Payload For Website4": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request4": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook Manual Review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "manual-dashboard-fixed",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "fce50a9587aeab97e47873d222f218fa7de15104cb2c1b8c36837feb50af8ac1"
+  },
+  "id": "dEWkipJ4UfK5bAZc",
+  "tags": [
+    {
+      "updatedAt": "2026-04-01T00:22:12.147Z",
+      "createdAt": "2026-04-01T00:22:12.147Z",
+      "id": "keZtOT48Jz8V9r7Y",
+      "name": "Agent"
+    }
+  ]
+}

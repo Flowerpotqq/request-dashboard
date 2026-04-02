@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 180" role="img" aria-labelledby="napTitle napDesc">
+  <title id="napTitle">NAP Solutions logo</title>
+  <desc id="napDesc">Dark navy NAP wordmark with a violet drop shadow and a teal accent dot.</desc>
+  <defs>
+    <style>
+      .word {
+        font-family: "Arial Black", "Montserrat", "Poppins", sans-serif;
+        font-weight: 900;
+        font-size: 132px;
+        letter-spacing: 2px;
+      }
+    </style>
+  </defs>
+  <circle cx="432" cy="34" r="24" fill="#11c8bb"/>
+  <text x="14" y="152" class="word" fill="#6f35ff">NAP</text>
+  <text x="10" y="148" class="word" fill="#000b2f">NAP</text>
+</svg>

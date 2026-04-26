@@ -23,14 +23,12 @@ import { ref, watch, onMounted, computed } from 'vue'
 import { useRequestsStore } from '@/stores/requests'
 import Topbar   from '@/components/Topbar.vue'
 import Requests from '@/views/Requests.vue'
-import Contact  from '@/views/Contact.vue'
 
 const store = useRequestsStore()
 const mainAreaRef = ref(null)
 
 const viewsByTab = {
   requests: Requests,
-  contact:  Contact,
 }
 
 const activeView = computed(() => viewsByTab[store.activeTab] || Requests)

@@ -1,0 +1,10 @@
+[
+  {
+    "access_token": "recoup_health_main_replace_with_a_long_random_token",
+    "client_id": "recoup-health",
+    "clinic_id": "recoup-health-centre",
+    "clinic_name": "Recoup Health Centre",
+    "receptionist_name": "Front Desk",
+    "link_label": "Recoup Health shared dashboard"
+  }
+]

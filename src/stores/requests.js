@@ -8,7 +8,7 @@ const VALID_TABS = new Set(['requests'])
 export const useRequestsStore = defineStore('requests', () => {
   const activeTab = ref('requests')
   const receptionistName = ref('Front Desk')
-  const clinicName = ref('Marketplace Dental Centre')
+  const clinicName = ref('Recoup Health Centre')
   const clientId = ref('')
   const clinicId = ref('')
 

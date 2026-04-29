@@ -73,7 +73,7 @@
         </div>
 
         <!-- Call summary -->
-        <div v-if="request.callSummary" class="section-block">
+        <div v-if="showCallSummary" class="section-block">
           <div class="section-label">AI Call Summary</div>
           <div class="notes-box summary-box">{{ request.callSummary }}</div>
         </div>
@@ -208,63 +208,37 @@ const sentimentClass = computed(() => {
   return 'sentiment-neutral'
 })
 
+const showCallSummary = computed(() => {
+  const summary = (props.request?.callSummary || '').trim()
+  const notes = (props.request?.notes || '').trim()
+  if (!summary) return false
+  if (notes && summary === notes) return false
+  return true
+})
+
 const payloadEntries = computed(() => {
   const payload = props.request?.rawPayload
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return []
 
-  const hiddenKeys = new Set([
-    'debug_booking',
-    'success',
-    'booking_created',
-    'calendar_created',
-    'full_name',
-    'first_name',
-    'last_name',
-    'phone',
-  ])
-
-  const topLevelKeys = [
-    'date_of_birth',
-    'appointment_type',
-    'appointment_datetime',
-    'appointment_end',
-    'patient_exists',
-    'six_month_gap',
-    'is_new_patient',
-    'practitioner',
-    'calendar_id',
-    'duration_minutes',
-    'is_initial',
-    'patient_status',
-    'event_summary',
-    'confirmation_message',
-    'calendar_event_id',
-    'description',
-  ]
-
-  const ordered = [
-    ...topLevelKeys.filter((key) => Object.prototype.hasOwnProperty.call(payload, key)),
-    ...Object.keys(payload).filter((key) => !topLevelKeys.includes(key) && !hiddenKeys.has(key)),
-  ]
-
   const labelMap = {
-    date_of_birth: 'Date of Birth',
-    appointment_type: 'Appointment Type',
-    appointment_datetime: 'Requested Start',
-    appointment_end: 'Requested End',
-    patient_exists: 'Existing Patient',
-    six_month_gap: 'More Than 6 Months Since Last Visit',
-    is_new_patient: 'New Patient',
     practitioner: 'Practitioner',
-    calendar_id: 'Practitioner Calendar',
-    duration_minutes: 'Duration (Minutes)',
-    is_initial: 'Initial Appointment',
+    appointment_type: 'Appointment Type',
+    date_of_birth: 'Date of Birth',
     patient_status: 'Patient Status',
-    event_summary: 'Appointment Summary',
-    confirmation_message: 'Confirmation Message',
+    duration_minutes: 'Duration',
     calendar_event_id: 'Calendar Event ID',
-    description: 'Booking Notes',
+    confirmation_message: 'Confirmation Message',
   }
+
+  const keyOrder = [
+    'practitioner',
+    'appointment_type',
+    'date_of_birth',
+    'patient_status',
+    'duration_minutes',
+    'calendar_event_id',
+    'confirmation_message',
+  ]
 
   function toDisplayValue(key, rawValue) {
     if (rawValue == null || rawValue === '') return '-'
@@ -275,21 +249,6 @@ const payloadEntries = computed(() => {
       const v = String(rawValue).trim().toLowerCase()
       if (v === 'yes' || v === 'true') return 'Yes'
       if (v === 'no' || v === 'false') return 'No'
-    }
-
-    if (key === 'appointment_datetime' || key === 'appointment_end') {
-      const d = new Date(String(rawValue))
-      if (!Number.isNaN(d.getTime())) {
-        return d.toLocaleString('en-US', {
-          weekday: 'short',
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: '2-digit',
-          hour12: true,
-        })
-      }
     }
 
     if (key === 'date_of_birth') {
@@ -303,12 +262,17 @@ const payloadEntries = computed(() => {
       }
     }
 
+    if (key === 'duration_minutes') {
+      const n = Number(rawValue)
+      if (Number.isFinite(n)) return `${n} min`
+    }
+
     if (typeof rawValue === 'object') return JSON.stringify(rawValue)
-    return String(rawValue)
+    return String(rawValue).replace(/^=/, '')
   }
 
-  return ordered
-    .filter((key) => !hiddenKeys.has(key))
+  return keyOrder
+    .filter((key) => Object.prototype.hasOwnProperty.call(payload, key))
     .map((key) => {
       const rawValue = payload[key]
       const value = toDisplayValue(key, rawValue)

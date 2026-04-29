@@ -5,9 +5,15 @@ function asObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
 }
 
+function stripLeadingEquals(val) {
+  if (typeof val === 'string' && val.startsWith('=')) return val.slice(1)
+  return val
+}
+
 function asString(value) {
   if (value == null) return ''
-  return typeof value === 'string' ? value.trim() : String(value).trim()
+  const normalized = typeof value === 'string' ? value.trim() : String(value).trim()
+  return stripLeadingEquals(normalized).trim()
 }
 
 function asBoolean(value, fallback = false) {
@@ -58,12 +64,25 @@ function extractDate(value) {
   const raw = asString(value)
   if (!raw) return ''
 
+  const date = new Date(raw)
+  if (!Number.isNaN(date.getTime())) {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Toronto',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(date)
+
+    const year = parts.find((part) => part.type === 'year')?.value
+    const month = parts.find((part) => part.type === 'month')?.value
+    const day = parts.find((part) => part.type === 'day')?.value
+
+    if (year && month && day) return `${year}-${month}-${day}`
+  }
+
   const match = raw.match(/^(\d{4}-\d{2}-\d{2})/)
   if (match) return match[1]
-
-  const date = new Date(raw)
-  if (Number.isNaN(date.getTime())) return ''
-  return date.toISOString().slice(0, 10)
+  return ''
 }
 
 function extractTime(value) {

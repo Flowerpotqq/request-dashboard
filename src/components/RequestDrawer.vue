@@ -56,11 +56,11 @@
           <div class="section-label">Request Details</div>
           <div class="info-grid">
             <div class="info-item">
-              <div class="info-label">Requested Date</div>
+              <div class="info-label">{{ request.type === 'reschedule' ? 'Requested New Date' : 'Requested Date' }}</div>
               <div class="info-value">{{ formatDate(request.requestedDate) }}</div>
             </div>
             <div class="info-item">
-              <div class="info-label">Requested Time</div>
+              <div class="info-label">{{ request.type === 'reschedule' ? 'Requested New Time' : 'Requested Time' }}</div>
               <div class="info-value">{{ request.requestedTime || '—' }}</div>
             </div>
             <div class="info-item">
@@ -68,8 +68,8 @@
               <div class="info-value">{{ request.reason || '—' }}</div>
             </div>
             <div class="info-item" v-if="request.existingDate">
-              <div class="info-label">Existing Appointment</div>
-              <div class="info-value">{{ request.existingDate }}</div>
+              <div class="info-label">Original Appointment</div>
+              <div class="info-value">{{ formatDateTime(request.existingDate) }}</div>
             </div>
           </div>
         </div>

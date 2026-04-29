@@ -47,6 +47,7 @@ function normalizeRequestType(value, fallback = 'book') {
     .replace(/[^a-z]/g, '')
 
   if (cleaned === 'book' || cleaned === 'booking') return 'book'
+  if (cleaned === 'rescedule' || cleaned === 'reshedule' || cleaned === 'rescheduel') return 'reschedule'
   if (cleaned === 'reschedule') return 'reschedule'
   if (cleaned === 'edit' || cleaned === 'update') return 'edit'
   if (cleaned === 'cancel' || cleaned === 'cancellation') return 'cancel'
@@ -114,6 +115,8 @@ function deriveRequestType(body, details, rawPayload) {
     body.request_type,
     body.type,
     body.action,
+    body.function_name,
+    body.name,
     rawPayload.request_type,
     rawPayload.type,
     rawPayload.action,
@@ -128,7 +131,11 @@ function deriveRequestType(body, details, rawPayload) {
     return 'reschedule'
   }
 
-  if (asString(body.event_id) && (asString(body.new_start) || asString(body.new_datetime))) {
+  if (asString(body.event_id) && (asString(body.new_start) || asString(body.new_datetime) || asString(body.appointment_datetime))) {
+    return 'reschedule'
+  }
+
+  if (asString(rawPayload.event_id) && (asString(rawPayload.new_start) || asString(rawPayload.new_datetime) || asString(rawPayload.appointment_datetime))) {
     return 'reschedule'
   }
 
@@ -146,17 +153,20 @@ function deriveRequestType(body, details, rawPayload) {
 export function buildStoredRequest(payload, options = {}) {
   const now = asString(options.now) || new Date().toISOString()
   const body = asObject(payload)
+  const args = asObject(body.args)
   const patient = asObject(body.patient)
   const details = asObject(body.request_details)
   const submission = asObject(body.submission_info)
   const rawPayload = asObject(body.raw_payload)
 
-  const firstName = firstNonEmpty(patient.first_name, body.first_name, body.firstName)
-  const lastName = firstNonEmpty(patient.last_name, body.last_name, body.lastName)
+  const firstName = firstNonEmpty(patient.first_name, body.first_name, body.firstName, args.first_name, args.firstName)
+  const lastName = firstNonEmpty(patient.last_name, body.last_name, body.lastName, args.last_name, args.lastName)
   const fullName = firstNonEmpty(
     patient.full_name,
     body.full_name,
     body.fullName,
+    args.full_name,
+    args.fullName,
     [firstName, lastName].filter(Boolean).join(' '),
   )
 
@@ -164,10 +174,15 @@ export function buildStoredRequest(payload, options = {}) {
     details.requested_datetime,
     body.requested_datetime,
     body.requestedDateTime,
+    body.reschedule_date,
+    args.requested_datetime,
+    args.reschedule_date,
     rawPayload.requested_datetime,
+    rawPayload.reschedule_date,
     rawPayload.appointment_datetime,
     rawPayload.new_datetime,
     rawPayload.new_start,
+    args.appointment_datetime,
     body.appointment_datetime,
     body.new_datetime,
     body.new_start,
@@ -177,31 +192,42 @@ export function buildStoredRequest(payload, options = {}) {
     details.existing_appointment_datetime,
     body.existing_appointment_datetime,
     body.existingDate,
+    args.existing_appointment_datetime,
+    args.appointment_datetime,
+    args.old_start,
+    args.old_datetime,
+    args.original_appointment_datetime,
+    body.old_start,
+    body.old_datetime,
+    body.original_appointment_datetime,
     rawPayload.old_start,
     rawPayload.start_time,
     rawPayload.old_datetime,
+    rawPayload.original_appointment_datetime,
     rawPayload.appointment_date,
   )
 
-  return {
+  const record = {
     id: firstNonEmpty(body.id, options.id),
     client_id: firstNonEmpty(body.client_id, body.clientId, options.clientId),
     clinic_id: firstNonEmpty(options.clinicId, body.clinic_id, body.clinicId),
     location_name: firstNonEmpty(body.location_name, body.locationName),
-    request_type: deriveRequestType(body, details, rawPayload),
+    request_type: deriveRequestType(body, details, { ...rawPayload, ...args }),
     status: normalizeStatus(body.status, 'pending'),
     patient: {
       first_name: firstName,
       last_name: lastName,
       full_name: fullName,
-      phone: firstNonEmpty(patient.phone, body.phone),
-      email: firstNonEmpty(patient.email, body.email),
+      phone: firstNonEmpty(patient.phone, body.phone, args.phone),
+      email: firstNonEmpty(patient.email, body.email, args.email),
     },
     request_details: {
       reason: firstNonEmpty(
         details.reason,
         body.reason,
+        args.reason,
         body.appointment_type,
+        args.appointment_type,
         body.event_summary,
         rawPayload.reason,
         rawPayload.appointment_type,
@@ -210,13 +236,15 @@ export function buildStoredRequest(payload, options = {}) {
       requested_date: firstNonEmpty(details.requested_date, body.requested_date, body.requestedDate, extractDate(requestedDateTime)),
       requested_time: firstNonEmpty(details.requested_time, body.requested_time, body.requestedTime, extractTime(requestedDateTime)),
       duration_minutes: asNumber(
-        firstNonEmpty(details.duration_minutes, body.duration_minutes, rawPayload.duration_minutes),
+        firstNonEmpty(details.duration_minutes, body.duration_minutes, args.duration_minutes, rawPayload.duration_minutes),
         60,
       ),
       existing_appointment_id: firstNonEmpty(
         details.existing_appointment_id,
         body.existing_appointment_id,
+        args.existing_appointment_id,
         rawPayload.event_id,
+        body.event_id,
       ),
       existing_appointment_datetime: existingAppointmentDateTime,
     },
@@ -258,6 +286,12 @@ export function buildStoredRequest(payload, options = {}) {
     created_at: firstNonEmpty(body.created_at, options.createdAt, now),
     updated_at: firstNonEmpty(options.updatedAt, now),
   }
+
+  if (record.request_type === 'reschedule' || record.request_type === 'cancel') {
+    record.request_details.reason = ''
+  }
+
+  return record
 }
 
 export function validateStoredRequest(record) {

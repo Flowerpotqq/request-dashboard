@@ -35,9 +35,15 @@ function getScope(req) {
 }
 
 function getPayload(req) {
-  return req.body?.request && typeof req.body.request === 'object'
+  const candidate = req.body?.request && typeof req.body.request === 'object'
     ? req.body.request
     : req.body
+
+  if (Array.isArray(candidate)) {
+    return candidate[0] && typeof candidate[0] === 'object' ? candidate[0] : {}
+  }
+
+  return candidate
 }
 
 function sendRequestCollection(res, records) {

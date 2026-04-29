@@ -99,6 +99,23 @@
           </div>
         </div>
 
+        <!-- Receptionist-friendly booking context -->
+        <div v-if="payloadEntries.length" class="section-block">
+          <div class="section-label">Booking Context</div>
+          <div class="info-grid">
+            <div
+              v-for="entry in payloadEntries"
+              :key="entry.key"
+              class="info-item"
+            >
+              <div class="info-label">{{ entry.label }}</div>
+              <div class="info-value" :class="{ 'font-mono text-xs': entry.mono }">
+                {{ entry.value }}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Operational note -->
         <div class="ops-note">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -189,6 +206,119 @@ const sentimentClass = computed(() => {
   if (s === 'positive') return 'sentiment-positive'
   if (s === 'negative') return 'sentiment-negative'
   return 'sentiment-neutral'
+})
+
+const payloadEntries = computed(() => {
+  const payload = props.request?.rawPayload
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return []
+
+  const hiddenKeys = new Set([
+    'debug_booking',
+    'success',
+    'booking_created',
+    'calendar_created',
+    'full_name',
+    'first_name',
+    'last_name',
+    'phone',
+  ])
+
+  const topLevelKeys = [
+    'date_of_birth',
+    'appointment_type',
+    'appointment_datetime',
+    'appointment_end',
+    'patient_exists',
+    'six_month_gap',
+    'is_new_patient',
+    'practitioner',
+    'calendar_id',
+    'duration_minutes',
+    'is_initial',
+    'patient_status',
+    'event_summary',
+    'confirmation_message',
+    'calendar_event_id',
+    'description',
+  ]
+
+  const ordered = [
+    ...topLevelKeys.filter((key) => Object.prototype.hasOwnProperty.call(payload, key)),
+    ...Object.keys(payload).filter((key) => !topLevelKeys.includes(key) && !hiddenKeys.has(key)),
+  ]
+
+  const labelMap = {
+    date_of_birth: 'Date of Birth',
+    appointment_type: 'Appointment Type',
+    appointment_datetime: 'Requested Start',
+    appointment_end: 'Requested End',
+    patient_exists: 'Existing Patient',
+    six_month_gap: 'More Than 6 Months Since Last Visit',
+    is_new_patient: 'New Patient',
+    practitioner: 'Practitioner',
+    calendar_id: 'Practitioner Calendar',
+    duration_minutes: 'Duration (Minutes)',
+    is_initial: 'Initial Appointment',
+    patient_status: 'Patient Status',
+    event_summary: 'Appointment Summary',
+    confirmation_message: 'Confirmation Message',
+    calendar_event_id: 'Calendar Event ID',
+    description: 'Booking Notes',
+  }
+
+  function toDisplayValue(key, rawValue) {
+    if (rawValue == null || rawValue === '') return '-'
+
+    if (typeof rawValue === 'boolean') return rawValue ? 'Yes' : 'No'
+
+    if (key === 'is_new_patient') {
+      const v = String(rawValue).trim().toLowerCase()
+      if (v === 'yes' || v === 'true') return 'Yes'
+      if (v === 'no' || v === 'false') return 'No'
+    }
+
+    if (key === 'appointment_datetime' || key === 'appointment_end') {
+      const d = new Date(String(rawValue))
+      if (!Number.isNaN(d.getTime())) {
+        return d.toLocaleString('en-US', {
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        })
+      }
+    }
+
+    if (key === 'date_of_birth') {
+      const d = new Date(String(rawValue))
+      if (!Number.isNaN(d.getTime())) {
+        return d.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        })
+      }
+    }
+
+    if (typeof rawValue === 'object') return JSON.stringify(rawValue)
+    return String(rawValue)
+  }
+
+  return ordered
+    .filter((key) => !hiddenKeys.has(key))
+    .map((key) => {
+      const rawValue = payload[key]
+      const value = toDisplayValue(key, rawValue)
+      return {
+        key,
+        label: labelMap[key] || key.replace(/_/g, ' '),
+        value,
+        mono: key === 'calendar_event_id' || key === 'calendar_id',
+      }
+    })
 })
 
 function formatDate(dateStr) {

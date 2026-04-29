@@ -109,11 +109,15 @@ function deriveRequestType(body, details, rawPayload) {
     return 'reschedule'
   }
 
+  if (asString(body.event_id) && (asString(body.new_start) || asString(body.new_datetime))) {
+    return 'reschedule'
+  }
+
   if (asString(rawPayload.event_id) && asString(rawPayload.updated_description)) {
     return 'edit'
   }
 
-  if (asString(details.existing_appointment_id) || asString(rawPayload.event_id)) {
+  if (asString(details.existing_appointment_id) || asString(rawPayload.event_id) || asString(body.event_id)) {
     return 'cancel'
   }
 
@@ -175,7 +179,14 @@ export function buildStoredRequest(payload, options = {}) {
       email: firstNonEmpty(patient.email, body.email),
     },
     request_details: {
-      reason: firstNonEmpty(details.reason, body.reason, rawPayload.reason),
+      reason: firstNonEmpty(
+        details.reason,
+        body.reason,
+        body.appointment_type,
+        body.event_summary,
+        rawPayload.reason,
+        rawPayload.appointment_type,
+      ),
       requested_datetime: requestedDateTime,
       requested_date: firstNonEmpty(details.requested_date, body.requested_date, body.requestedDate, extractDate(requestedDateTime)),
       requested_time: firstNonEmpty(details.requested_time, body.requested_time, body.requestedTime, extractTime(requestedDateTime)),
@@ -195,12 +206,26 @@ export function buildStoredRequest(payload, options = {}) {
       body.callSummary,
       body.summary,
       body.message,
+      body.confirmation_message,
+      body.description,
+      body.event_summary,
       rawPayload.summary,
       rawPayload.message,
+      rawPayload.confirmation_message,
+      rawPayload.description,
+      rawPayload.event_summary,
       'Request submitted by AI receptionist for manual review.',
     ),
     submission_info: {
-      submitted_at: firstNonEmpty(submission.submitted_at, body.submittedAt, now),
+      submitted_at: firstNonEmpty(
+        submission.submitted_at,
+        body.submittedAt,
+        body.submitted_at,
+        body.created_at,
+        rawPayload.submitted_at,
+        rawPayload.created_at,
+        now,
+      ),
       call_id: firstNonEmpty(submission.call_id, body.call_id, body.callId, rawPayload.call_id),
       source: firstNonEmpty(submission.source, body.source, 'n8n'),
       manual_action_required: asBoolean(

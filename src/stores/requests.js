@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 const VALID_TABS = new Set(['requests'])
+const AUTO_REFRESH_MS = 8000
 
 const API_BASE_URL = 'https://dashboard.getnapsolutions.com'
 
@@ -37,6 +38,8 @@ export const useRequestsStore = defineStore('requests', () => {
   const sortKey = ref('submittedAt')
   const sortDir = ref('desc')
   const filterStatus = ref('all')
+  const refreshTimer = ref(null)
+  const visibilityListenerBound = ref(false)
 
   const selectedRequest = computed(() =>
     requests.value.find((request) => request.id === selectedId.value) || null,
@@ -159,6 +162,35 @@ export const useRequestsStore = defineStore('requests', () => {
     }
   }
 
+  function stopAutoRefresh() {
+    if (refreshTimer.value) {
+      clearInterval(refreshTimer.value)
+      refreshTimer.value = null
+    }
+  }
+
+  function startAutoRefresh() {
+    if (typeof window === 'undefined' || refreshTimer.value) return
+
+    refreshTimer.value = setInterval(() => {
+      if (document.visibilityState !== 'visible') return
+      loadRequests()
+    }, AUTO_REFRESH_MS)
+  }
+
+  function bindVisibilityRefresh() {
+    if (typeof window === 'undefined' || visibilityListenerBound.value) return
+
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') {
+        loadRequests()
+      }
+    }
+
+    document.addEventListener('visibilitychange', onVisible)
+    visibilityListenerBound.value = true
+  }
+
   async function updateRequestStatus(id, status) {
     const request = requests.value.find((entry) => entry.id === id)
     if (!request) return
@@ -202,6 +234,8 @@ export const useRequestsStore = defineStore('requests', () => {
 
   function init() {
     loadRequests()
+    startAutoRefresh()
+    bindVisibilityRefresh()
   }
 
   return {
@@ -231,6 +265,8 @@ export const useRequestsStore = defineStore('requests', () => {
     setFilter,
     loadRequests,
     updateRequestStatus,
+    startAutoRefresh,
+    stopAutoRefresh,
     init,
   }
 })

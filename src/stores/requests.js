@@ -114,11 +114,14 @@ export const useRequestsStore = defineStore('requests', () => {
     selectedId.value = null
   }
 
-  async function loadRequests() {
-    if (loading.value) return
+  async function loadRequests(options = {}) {
+    const silent = Boolean(options.silent)
+    if (loading.value && !silent) return
 
-    loading.value = true
-    loadError.value = null
+    if (!silent) {
+      loading.value = true
+      loadError.value = null
+    }
 
     try {
       const token = (function() {
@@ -128,7 +131,7 @@ export const useRequestsStore = defineStore('requests', () => {
       })()
 
       if (!token) {
-        requests.value = []
+        if (!silent) requests.value = []
         return
       }
 
@@ -155,10 +158,14 @@ export const useRequestsStore = defineStore('requests', () => {
 
     } catch (error) {
       console.error('[NAP][REQUESTS] Load error:', error)
-      loadError.value = error.message
-      requests.value = []
+      if (!silent) {
+        loadError.value = error.message
+        requests.value = []
+      }
     } finally {
-      loading.value = false
+      if (!silent) {
+        loading.value = false
+      }
     }
   }
 
@@ -174,7 +181,7 @@ export const useRequestsStore = defineStore('requests', () => {
 
     refreshTimer.value = setInterval(() => {
       if (document.visibilityState !== 'visible') return
-      loadRequests()
+      loadRequests({ silent: true })
     }, AUTO_REFRESH_MS)
   }
 
@@ -183,7 +190,7 @@ export const useRequestsStore = defineStore('requests', () => {
 
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
-        loadRequests()
+        loadRequests({ silent: true })
       }
     }
 

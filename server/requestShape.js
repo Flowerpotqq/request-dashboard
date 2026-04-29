@@ -46,6 +46,11 @@ function normalizeRequestType(value, fallback = 'book') {
     .replace(/_appointment(?:_cal)?$/, '')
     .replace(/[^a-z]/g, '')
 
+  if (cleaned.includes('reschedule')) return 'reschedule'
+  if (cleaned.includes('cancel')) return 'cancel'
+  if (cleaned.includes('edit') || cleaned.includes('update')) return 'edit'
+  if (cleaned.includes('book') || cleaned.includes('booking')) return 'book'
+
   if (cleaned === 'book' || cleaned === 'booking') return 'book'
   if (cleaned === 'rescedule' || cleaned === 'reshedule' || cleaned === 'rescheduel') return 'reschedule'
   if (cleaned === 'reschedule') return 'reschedule'

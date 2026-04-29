@@ -1,14 +1,30 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { generateMockRequests } from '@/composables/useRequestsMockData'
-import { WEBHOOKS, WEBHOOKS_ENABLED } from '@/config/webhooks'
 
 const VALID_TABS = new Set(['requests'])
+
+const API_BASE_URL = 'https://dashboard.getnapsolutions.com'
+
+function getTokenFromUrl() {
+  if (typeof window === 'undefined') return ''
+  const match = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
+  return match?.[1] ? decodeURIComponent(match[1]).trim() : ''
+}
+
+function buildRequestsUrl(token) {
+  if (!token) return ''
+  return `${API_BASE_URL}/api/link/${encodeURIComponent(token)}/queue/requests`
+}
+
+function buildStatusUrl(token, id) {
+  if (!token) return ''
+  return `${API_BASE_URL}/api/link/${encodeURIComponent(token)}/queue/requests/${id}`
+}
 
 export const useRequestsStore = defineStore('requests', () => {
   const activeTab = ref('requests')
   const receptionistName = ref('Front Desk')
-  const clinicName = ref('Recoup Health Centre')
+  const clinicName = ref('')
   const clientId = ref('')
   const clinicId = ref('')
 
@@ -86,7 +102,6 @@ export const useRequestsStore = defineStore('requests', () => {
       sortDir.value = sortDir.value === 'asc' ? 'desc' : 'asc'
       return
     }
-
     sortKey.value = key
     sortDir.value = 'desc'
   }
@@ -103,35 +118,38 @@ export const useRequestsStore = defineStore('requests', () => {
     loadError.value = null
 
     try {
-      if (WEBHOOKS_ENABLED && WEBHOOKS.requests) {
-        const response = await fetch(`${WEBHOOKS.requests}?_ts=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { Accept: 'application/json' },
-        })
+      const token = getTokenFromUrl()
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
-
-        const body = await response.json()
-        requests.value = Array.isArray(body) ? body : (body.requests ?? [])
-
-        if (body?.tenant) {
-          receptionistName.value = body.tenant.receptionistName || receptionistName.value
-          clinicName.value = body.tenant.clinicName || clinicName.value
-          clientId.value = body.tenant.clientId || clientId.value
-          clinicId.value = body.tenant.clinicId || clinicId.value
-        }
-
+      if (!token) {
+        requests.value = []
         return
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 320))
-      requests.value = generateMockRequests()
+      const url = buildRequestsUrl(token)
+
+      const response = await fetch(`${url}?_ts=${Date.now()}`, {
+        cache: 'no-store',
+        headers: { Accept: 'application/json' },
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
+      const body = await response.json()
+      requests.value = Array.isArray(body) ? body : (body.requests ?? [])
+
+      if (body?.tenant) {
+        receptionistName.value = body.tenant.receptionistName || receptionistName.value
+        clinicName.value = body.tenant.clinicName || clinicName.value
+        clientId.value = body.tenant.clientId || clientId.value
+        clinicId.value = body.tenant.clinicId || clinicId.value
+      }
+
     } catch (error) {
       console.error('[NAP][REQUESTS] Load error:', error)
       loadError.value = error.message
-      requests.value = generateMockRequests()
+      requests.value = []
     } finally {
       loading.value = false
     }
@@ -144,29 +162,33 @@ export const useRequestsStore = defineStore('requests', () => {
     const previousStatus = request.status
     request.status = status
 
-    if (WEBHOOKS_ENABLED && WEBHOOKS.updateStatus(id)) {
-      try {
-        const response = await fetch(WEBHOOKS.updateStatus(id), {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            status,
-            updatedAt: new Date().toISOString(),
-          }),
-        })
+    const token = getTokenFromUrl()
+    if (!token) return
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`)
-        }
+    const url = buildStatusUrl(token, id)
+    if (!url) return
 
-        const body = await response.json()
-        if (body?.request?.status) {
-          request.status = body.request.status
-        }
-      } catch (error) {
-        request.status = previousStatus
-        console.warn('[NAP][REQUESTS] Status sync error (non-fatal):', error)
+    try {
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status,
+          updatedAt: new Date().toISOString(),
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
       }
+
+      const body = await response.json()
+      if (body?.request?.status) {
+        request.status = body.request.status
+      }
+    } catch (error) {
+      request.status = previousStatus
+      console.warn('[NAP][REQUESTS] Status sync error (non-fatal):', error)
     }
   }
 

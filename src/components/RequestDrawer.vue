@@ -244,6 +244,19 @@ const payloadEntries = computed(() => {
     'confirmation_message',
   ]
 
+  const derivedValues = {
+    appointment_type: payload.appointment_type ?? payload.reason ?? props.request?.reason ?? '',
+  }
+
+  function toTitleCase(text) {
+    return String(text)
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(Boolean)
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   function toDisplayValue(key, rawValue) {
     if (rawValue == null || rawValue === '') return '-'
 
@@ -271,14 +284,21 @@ const payloadEntries = computed(() => {
       if (Number.isFinite(n)) return `${n} min`
     }
 
+    if (key === 'appointment_type') {
+      const clean = String(rawValue).replace(/^=/, '').trim()
+      return clean ? toTitleCase(clean) : '-'
+    }
+
     if (typeof rawValue === 'object') return JSON.stringify(rawValue)
     return String(rawValue).replace(/^=/, '')
   }
 
   return keyOrder
-    .filter((key) => Object.prototype.hasOwnProperty.call(payload, key))
+    .filter((key) => Object.prototype.hasOwnProperty.call(payload, key) || derivedValues[key])
     .map((key) => {
-      const rawValue = payload[key]
+      const rawValue = Object.prototype.hasOwnProperty.call(payload, key)
+        ? payload[key]
+        : derivedValues[key]
       const value = toDisplayValue(key, rawValue)
       return {
         key,

@@ -40,6 +40,14 @@
               <div class="info-label">Phone Number</div>
               <div class="info-value font-mono">{{ request.phone }}</div>
             </div>
+            <div v-if="patientDateOfBirth" class="info-item">
+              <div class="info-label">Date of Birth</div>
+              <div class="info-value">{{ patientDateOfBirth }}</div>
+            </div>
+            <div v-if="patientStatus" class="info-item">
+              <div class="info-label">Patient Status</div>
+              <div class="info-value">{{ patientStatus }}</div>
+            </div>
           </div>
         </div>
 
@@ -223,8 +231,6 @@ const payloadEntries = computed(() => {
   const labelMap = {
     practitioner: 'Practitioner',
     appointment_type: 'Appointment Type',
-    date_of_birth: 'Date of Birth',
-    patient_status: 'Patient Status',
     duration_minutes: 'Duration',
     calendar_event_id: 'Calendar Event ID',
     confirmation_message: 'Confirmation Message',
@@ -233,8 +239,6 @@ const payloadEntries = computed(() => {
   const keyOrder = [
     'practitioner',
     'appointment_type',
-    'date_of_birth',
-    'patient_status',
     'duration_minutes',
     'calendar_event_id',
     'confirmation_message',
@@ -283,6 +287,23 @@ const payloadEntries = computed(() => {
         mono: key === 'calendar_event_id' || key === 'calendar_id',
       }
     })
+})
+
+const patientDateOfBirth = computed(() => {
+  const raw = props.request?.rawPayload?.date_of_birth
+  if (!raw) return ''
+  const clean = String(raw).replace(/^=/, '').trim()
+  const d = new Date(clean)
+  if (!Number.isNaN(d.getTime())) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  }
+  return clean
+})
+
+const patientStatus = computed(() => {
+  const raw = props.request?.rawPayload?.patient_status
+  if (!raw) return ''
+  return String(raw).replace(/^=/, '').trim()
 })
 
 function formatDate(dateStr) {

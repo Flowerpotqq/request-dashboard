@@ -9,6 +9,7 @@ const WEBHOOK_BASE = String(import.meta.env.VITE_N8N_WEBHOOK_BASE_URL ?? '').rep
 
 function endpoint(path) {
   if (!ENABLE_WEBHOOKS) return ''
+  if (!TENANT_CONTEXT.accessToken && !CLIENT_ID && !CLINIC_ID) return ''
 
   const cleanedPath = String(path).replace(/^\/+/, '')
 
@@ -20,8 +21,6 @@ function endpoint(path) {
     if (CLIENT_ID && CLINIC_ID) {
       return `${API_BASE_URL}/api/${CLIENT_ID}/${CLINIC_ID}/${cleanedPath}`
     }
-
-    return `${API_BASE_URL}/api/${cleanedPath}`
   }
 
   if (WEBHOOK_BASE) {

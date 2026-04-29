@@ -118,14 +118,18 @@ export const useRequestsStore = defineStore('requests', () => {
     loadError.value = null
 
     try {
-      const token = getTokenFromUrl()
+      const token = (function() {
+        if (typeof window === 'undefined') return ''
+        const match = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
+        return match?.[1] ? decodeURIComponent(match[1]).trim() : ''
+      })()
 
       if (!token) {
         requests.value = []
         return
       }
 
-      const url = buildRequestsUrl(token)
+      const url = `https://dashboard.getnapsolutions.com/api/link/${encodeURIComponent(token)}/queue/requests`
 
       const response = await fetch(`${url}?_ts=${Date.now()}`, {
         cache: 'no-store',
@@ -162,11 +166,15 @@ export const useRequestsStore = defineStore('requests', () => {
     const previousStatus = request.status
     request.status = status
 
-    const token = getTokenFromUrl()
+    const token = (function() {
+      if (typeof window === 'undefined') return ''
+      const match = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
+      return match?.[1] ? decodeURIComponent(match[1]).trim() : ''
+    })()
+
     if (!token) return
 
-    const url = buildStatusUrl(token, id)
-    if (!url) return
+    const url = `https://dashboard.getnapsolutions.com/api/link/${encodeURIComponent(token)}/queue/requests/${id}`
 
     try {
       const response = await fetch(url, {

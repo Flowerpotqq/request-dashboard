@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
-const VALID_TABS = new Set(['requests'])
+const VALID_TABS = new Set(['requests', 'analytics'])
 const AUTO_REFRESH_MS = 8000
 
 const API_BASE_URL = 'https://dashboard.getnapsolutions.com'

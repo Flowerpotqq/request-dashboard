@@ -59,6 +59,7 @@ const pendingCount = computed(() =>
 
 const navItems = [
   { key: 'requests', label: 'Request Queue' },
+  { key: 'analytics', label: 'Analytics' },
 ]
 
 const initials = computed(() => {

@@ -141,6 +141,11 @@ body {
 }
 .badge-pending .badge-dot { background: var(--c-amber); box-shadow: 0 0 5px var(--c-amber); }
 
+.badge-booked {
+  background: var(--blue-light); color: var(--c-blue); border-color: var(--blue-border);
+}
+.badge-booked .badge-dot { background: var(--c-blue); box-shadow: 0 0 5px var(--c-blue); }
+
 /* Request type badges */
 .badge-book       { background: rgba(0,168,138,0.08);  color: #007d68;  border-color: rgba(0,168,138,0.28); }
 .badge-reschedule { background: rgba(45,95,196,0.08);  color: #2d5fc4;  border-color: rgba(45,95,196,0.28); }

@@ -15,6 +15,7 @@ const props = defineProps({
 const badgeClass = computed(() => {
   switch (props.status) {
     case 'completed': return 'badge-completed'
+    case 'booked_in_jane': return 'badge-booked'
     case 'denied':    return 'badge-denied'
     default:          return 'badge-pending'
   }
@@ -23,6 +24,7 @@ const badgeClass = computed(() => {
 const label = computed(() => {
   switch (props.status) {
     case 'completed': return 'Completed'
+    case 'booked_in_jane': return 'Booked in Jane'
     case 'denied':    return 'Denied'
     default:          return 'Pending'
   }

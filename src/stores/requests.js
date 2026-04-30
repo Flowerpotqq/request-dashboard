@@ -22,6 +22,11 @@ function buildStatusUrl(token, id) {
   return `${API_BASE_URL}/api/link/${encodeURIComponent(token)}/queue/requests/${id}`
 }
 
+function buildDeleteGcalHoldUrl(token, id) {
+  if (!token) return ''
+  return `${API_BASE_URL}/api/link/${encodeURIComponent(token)}/queue/requests/${id}/delete-gcal-hold`
+}
+
 export const useRequestsStore = defineStore('requests', () => {
   const activeTab = ref('requests')
   const receptionistName = ref('Front Desk')
@@ -239,6 +244,52 @@ export const useRequestsStore = defineStore('requests', () => {
     }
   }
 
+  async function removeGoogleCalendarHold(id, payload) {
+    const request = requests.value.find((entry) => entry.id === id)
+    if (!request) {
+      throw new Error('Request not found.')
+    }
+
+    const token = (function() {
+      if (typeof window === 'undefined') return ''
+      const match = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
+      return match?.[1] ? decodeURIComponent(match[1]).trim() : ''
+    })()
+
+    if (!token) {
+      throw new Error('Missing access token.')
+    }
+
+    const url = buildDeleteGcalHoldUrl(token, id)
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    const body = await response.json().catch(() => null)
+    if (!response.ok || !body?.success) {
+      throw new Error(body?.error || `HTTP ${response.status}`)
+    }
+
+    request.gcalDeleted = true
+    request.calendarEventId = null
+    request.status = 'booked_in_jane'
+
+    if (request.rawPayload && typeof request.rawPayload === 'object') {
+      request.rawPayload.delete_enabled = false
+      if (request.rawPayload.delete_payload && typeof request.rawPayload.delete_payload === 'object') {
+        request.rawPayload.delete_payload.calendar_event_id = null
+      }
+    }
+
+    if (body?.request) {
+      Object.assign(request, body.request)
+    }
+
+    return body
+  }
+
   function init() {
     loadRequests()
     startAutoRefresh()
@@ -272,6 +323,7 @@ export const useRequestsStore = defineStore('requests', () => {
     setFilter,
     loadRequests,
     updateRequestStatus,
+    removeGoogleCalendarHold,
     startAutoRefresh,
     stopAutoRefresh,
     init,

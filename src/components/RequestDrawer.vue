@@ -160,17 +160,32 @@
             Deny Request
           </button>
         </div>
+        <div v-if="canRemoveGoogleCalendarHold" class="mt-2">
+          <button
+            class="nap-btn action-btn remove-hold-btn"
+            :disabled="updating"
+            @click="handleRemoveGoogleCalendarHold"
+          >
+            Remove Google Calendar Hold
+          </button>
+        </div>
 
         <div v-else class="status-resolved">
           <StatusBadge :status="request.status" />
           <span class="text-[12px] text-nap-text-3">
-            {{ request.status === 'completed' ? 'Handled manually by receptionist.' : 'Request was denied.' }}
+            {{ request.status === 'denied' ? 'Request was denied.' : 'Handled manually by receptionist.' }}
           </span>
           <button class="nap-btn reopen-btn" @click="handleReopen">
             Reopen
           </button>
         </div>
       </div>
+
+      <Transition name="overlay">
+        <div v-if="toastMessage" :class="['drawer-toast', toastType === 'error' ? 'drawer-toast-error' : 'drawer-toast-success']">
+          {{ toastMessage }}
+        </div>
+      </Transition>
 
     </div>
   </Transition>
@@ -188,6 +203,9 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 const store = useRequestsStore()
 const updating = ref(false)
+const toastMessage = ref('')
+const toastType = ref('success')
+let toastTimer = null
 
 const typeBadgeClass = computed(() => {
   switch (props.request?.type) {
@@ -222,6 +240,14 @@ const showCallSummary = computed(() => {
   if (!summary) return false
   if (notes && summary === notes) return false
   return true
+})
+
+const canRemoveGoogleCalendarHold = computed(() => {
+  const payload = props.request?.rawPayload
+  return Boolean(
+    payload?.delete_enabled === true
+    && payload?.delete_payload?.calendar_event_id,
+  )
 })
 
 const payloadEntries = computed(() => {
@@ -373,6 +399,42 @@ async function handleReopen() {
   }
 }
 
+function showToast(message, type = 'success') {
+  toastMessage.value = message
+  toastType.value = type
+
+  if (toastTimer) {
+    clearTimeout(toastTimer)
+  }
+
+  toastTimer = setTimeout(() => {
+    toastMessage.value = ''
+  }, 2500)
+}
+
+async function handleRemoveGoogleCalendarHold() {
+  const request = props.request
+  const payload = request?.rawPayload?.delete_payload
+  if (!request || !payload) return
+
+  const confirmed = window.confirm('Remove the temporary Google Calendar hold?')
+  if (!confirmed) return
+
+  updating.value = true
+  try {
+    await store.removeGoogleCalendarHold(request.id, {
+      calendar_event_id: payload.calendar_event_id,
+      calendar_id: payload.calendar_id,
+      practitioner: payload.practitioner,
+    })
+    showToast('Calendar hold removed', 'success')
+  } catch (_error) {
+    showToast('Failed to remove calendar hold', 'error')
+  } finally {
+    updating.value = false
+  }
+}
+
 function formatPhone(value) {
   if (!value) return '-'
   const digits = String(value).replace(/\D/g, '')
@@ -478,5 +540,34 @@ function formatPhone(value) {
 }
 .reopen-btn {
   margin-left: auto; padding: 6px 12px; font-size: 11px;
+}
+
+.remove-hold-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.drawer-toast {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  z-index: 600;
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.drawer-toast-success {
+  background: var(--ok-light);
+  color: var(--c-teal-dark);
+  border-color: var(--ok-border);
+}
+
+.drawer-toast-error {
+  background: var(--danger-light);
+  color: #b02040;
+  border-color: var(--danger-border);
 }
 </style>

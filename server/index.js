@@ -4,7 +4,7 @@ import express from 'express'
 import { existsSync } from 'node:fs'
 import path from 'node:path'
 
-import { createRequest, listRequests, updateRequestStatus } from './requestStore.js'
+import { createRequest, listRequests, markGcalHoldDeleted, updateRequestStatus } from './requestStore.js'
 import { toDashboardRequest } from './requestShape.js'
 import { findTenantByAccessToken, toPublicTenant } from './tenantStore.js'
 
@@ -14,6 +14,10 @@ dotenv.config({ path: '.env', override: false })
 const app = express()
 const port = Number(process.env.API_PORT || 3000)
 const dashboardApiKey = String(process.env.DASHBOARD_API_KEY || '').trim()
+const deleteGcalHoldWebhookUrl = String(
+  process.env.DELETE_GCAL_HOLD_WEBHOOK_URL
+  || 'https://n8n.getnapsolutions.com/webhook/recoup-health-delete-gcal-hold',
+).trim()
 const distDir = path.resolve(process.cwd(), 'dist')
 const distIndex = path.join(distDir, 'index.html')
 
@@ -67,6 +71,47 @@ function sendSingleRequest(res, record, statusCode = 200) {
     request: toDashboardRequest(record),
     stored_request: record,
   })
+}
+
+function validateDeleteHoldBody(body) {
+  const calendarEventId = String(body?.calendar_event_id || '').trim()
+  const calendarId = String(body?.calendar_id || '').trim()
+  const practitioner = String(body?.practitioner || '').trim()
+  const details = []
+
+  if (!calendarEventId) details.push('calendar_event_id is required.')
+  if (!calendarId) details.push('calendar_id is required.')
+  if (!practitioner) details.push('practitioner is required.')
+
+  if (details.length) {
+    throw createError(422, 'Delete hold payload is invalid.', details)
+  }
+
+  return { calendarEventId, calendarId, practitioner }
+}
+
+async function callDeleteGcalHoldWebhook(id, payload) {
+  const response = await fetch(deleteGcalHoldWebhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      request_id: id,
+      calendar_event_id: payload.calendarEventId,
+      calendar_id: payload.calendarId,
+      practitioner: payload.practitioner,
+    }),
+  })
+
+  let body = null
+  try {
+    body = await response.json()
+  } catch {
+    body = null
+  }
+
+  if (!response.ok || !body?.success || !body?.deleted) {
+    throw createError(502, 'Failed to remove Google Calendar hold via automation.')
+  }
 }
 
 function extractApiKey(req) {
@@ -139,6 +184,16 @@ function registerScopedRoutes(basePath) {
 
   app.patch(`${basePath}/requests/:id`, requireApiKey, patchHandler)
   app.patch(`${basePath}/requests/:id/status`, requireApiKey, patchHandler)
+  app.post(`${basePath}/requests/:id/delete-gcal-hold`, requireApiKey, async (req, res, next) => {
+    try {
+      const payload = validateDeleteHoldBody(req.body)
+      await callDeleteGcalHoldWebhook(req.params.id, payload)
+      const record = await markGcalHoldDeleted(req.params.id, payload, getScope(req))
+      sendSingleRequest(res, record)
+    } catch (error) {
+      next(error)
+    }
+  })
 }
 
 app.get('/health', (_req, res) => {
@@ -185,6 +240,25 @@ const accessPatchHandler = async (req, res, next) => {
 
 app.patch('/api/link/:accessToken/queue/requests/:id', resolveTenant, accessPatchHandler)
 app.patch('/api/link/:accessToken/queue/requests/:id/status', resolveTenant, accessPatchHandler)
+app.post('/api/link/:accessToken/queue/requests/:id/delete-gcal-hold', resolveTenant, async (req, res, next) => {
+  try {
+    const payload = validateDeleteHoldBody(req.body)
+    await callDeleteGcalHoldWebhook(req.params.id, payload)
+    const record = await markGcalHoldDeleted(req.params.id, payload, {
+      clientId: req.tenant.clientId,
+      clinicId: req.tenant.clinicId,
+    })
+
+    res.json({
+      success: true,
+      tenant: toPublicTenant(req.tenant),
+      request: toDashboardRequest(record),
+      stored_request: record,
+    })
+  } catch (error) {
+    next(error)
+  }
+})
 
 app.post('/api/link/:accessToken/intake/requests', requireApiKey, resolveTenant, async (req, res, next) => {
   try {

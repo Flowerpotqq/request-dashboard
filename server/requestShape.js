@@ -1,5 +1,5 @@
 const VALID_REQUEST_TYPES = new Set(['book', 'reschedule', 'edit', 'cancel'])
-const VALID_STATUSES = new Set(['pending', 'completed', 'denied'])
+const VALID_STATUSES = new Set(['pending', 'completed', 'denied', 'booked_in_jane'])
 
 function asObject(value) {
   return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
@@ -309,7 +309,7 @@ export function validateStoredRequest(record) {
   }
 
   if (!VALID_STATUSES.has(record.status)) {
-    errors.push('status must be one of: pending, completed, denied.')
+    errors.push('status must be one of: pending, completed, denied, booked_in_jane.')
   }
 
   if (!record.patient.full_name && !record.patient.first_name && !record.patient.last_name) {
@@ -329,7 +329,7 @@ export function validateStoredRequest(record) {
 
 export function validateStatusUpdate(status) {
   if (!VALID_STATUSES.has(normalizeStatus(status, ''))) {
-    return ['status must be one of: pending, completed, denied.']
+    return ['status must be one of: pending, completed, denied, booked_in_jane.']
   }
 
   return []
@@ -368,6 +368,12 @@ export function toDashboardRequest(record) {
     rawPayload: normalized.raw_payload,
     requestDetails: normalized.request_details,
     patient: normalized.patient,
+    gcalDeleted: Boolean(record?.gcal_deleted),
+    calendarEventId: asString(
+      record?.calendar_event_id
+      ?? record?.raw_payload?.delete_payload?.calendar_event_id
+      ?? normalized?.raw_payload?.delete_payload?.calendar_event_id,
+    ),
     createdAt: normalized.created_at,
     updatedAt: normalized.updated_at,
   }

@@ -119,3 +119,45 @@ export async function updateRequestStatus(id, status, scope = {}) {
     return updated
   })
 }
+
+export async function markGcalHoldDeleted(id, details, scope = {}) {
+  const { calendarEventId, calendarId, practitioner } = details || {}
+  if (!calendarEventId || !calendarId || !practitioner) {
+    throw createError(422, 'Delete hold payload is invalid.', [
+      'calendar_event_id, calendar_id, and practitioner are required.',
+    ])
+  }
+
+  return queueWrite(async (records) => {
+    const index = records.findIndex(
+      (record) => record.id === id && matchesScope(record, scope),
+    )
+
+    if (index === -1) {
+      throw createError(404, `Request ${id} was not found.`)
+    }
+
+    const current = records[index] || {}
+    const rawPayload = current.raw_payload && typeof current.raw_payload === 'object'
+      ? { ...current.raw_payload }
+      : {}
+    const deletePayload = rawPayload.delete_payload && typeof rawPayload.delete_payload === 'object'
+      ? { ...rawPayload.delete_payload }
+      : {}
+
+    deletePayload.calendar_event_id = null
+    rawPayload.delete_payload = deletePayload
+    rawPayload.delete_enabled = false
+
+    records[index] = {
+      ...current,
+      status: 'booked_in_jane',
+      gcal_deleted: true,
+      calendar_event_id: null,
+      raw_payload: rawPayload,
+      updated_at: new Date().toISOString(),
+    }
+
+    return records[index]
+  })
+}

@@ -226,13 +226,12 @@
       </div>
     </template>
 
+    <!-- Request detail drawer -->
+    <RequestDrawer
+      :request="store.selectedRequest"
+      @close="store.closeDrawer()"
+    />
   </div>
-
-  <!-- Request detail drawer -->
-  <RequestDrawer
-    :request="store.selectedRequest"
-    @close="store.closeDrawer()"
-  />
 </template>
 
 <script setup>

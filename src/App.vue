@@ -8,8 +8,8 @@
     <Topbar />
 
     <!-- Main content -->
-    <main ref="mainAreaRef" class="main-area">
-      <div class="content-wrap">
+    <main ref="mainAreaRef" :class="['main-area', store.activeTab === 'analytics' && 'main-area--analytics']">
+      <div :class="['content-wrap', store.activeTab === 'analytics' && 'content-wrap--analytics']">
         <Transition name="tab" mode="out-in">
           <component :is="activeView" :key="store.activeTab" />
         </Transition>
@@ -71,9 +71,16 @@ onMounted(() => store.init())
   position: relative; z-index: 1;
   scroll-behavior: smooth;
 }
+.main-area--analytics { overflow: hidden; }
 .content-wrap {
   max-width: 1320px; margin: 0 auto;
   padding: 28px 28px;
   position: relative;
+}
+.content-wrap--analytics {
+  max-width: none;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
 }
 </style>

@@ -59,10 +59,11 @@ export const useRequestsStore = defineStore('requests', () => {
 
     const query = search.value.trim().toLowerCase()
     if (query) {
+      const safeLower = (value) => String(value ?? '').toLowerCase()
       list = list.filter((request) =>
-        request.fullName.toLowerCase().includes(query)
-        || request.phone.toLowerCase().includes(query)
-        || request.reason.toLowerCase().includes(query),
+        safeLower(request.fullName).includes(query)
+        || safeLower(request.phone).includes(query)
+        || safeLower(request.reason).includes(query),
       )
     }
 

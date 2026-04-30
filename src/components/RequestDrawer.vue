@@ -38,7 +38,7 @@
             </div>
             <div class="info-item">
               <div class="info-label">Phone Number</div>
-              <div class="info-value font-mono">{{ request.phone }}</div>
+              <div class="info-value font-mono">{{ formatPhone(request.phone) }}</div>
             </div>
             <div v-if="patientDateOfBirth" class="info-item">
               <div class="info-label">Date of Birth</div>
@@ -371,6 +371,20 @@ async function handleReopen() {
   } finally {
     updating.value = false
   }
+}
+
+function formatPhone(value) {
+  if (!value) return '-'
+  const digits = String(value).replace(/\D/g, '')
+  const normalized = digits.length === 11 && digits.startsWith('1')
+    ? digits.slice(1)
+    : digits
+
+  if (normalized.length === 10) {
+    return `${normalized.slice(0, 3)}-${normalized.slice(3, 6)}-${normalized.slice(6)}`
+  }
+
+  return String(value).trim()
 }
 </script>
 

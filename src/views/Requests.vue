@@ -174,12 +174,12 @@
               <!-- Patient name -->
               <td>
                 <div class="font-semibold text-nap-text text-[13px]">{{ req.fullName }}</div>
-                <div class="text-[11px] text-nap-text-3 mt-0.5">{{ req.reason }}</div>
+                <div class="text-[11px] text-nap-text-3 mt-0.5">{{ formatAppointmentType(req.reason) }}</div>
               </td>
 
               <!-- Phone -->
               <td class="font-mono text-[12px] text-nap-text-2 whitespace-nowrap">
-                {{ req.phone }}
+                {{ formatPhone(req.phone) }}
               </td>
 
               <!-- Requested date -->
@@ -308,6 +308,27 @@ function formatRelative(ts) {
   if (diffDay === 1) return 'Yesterday'
   if (diffDay < 7) return `${diffDay}d ago`
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
+
+function formatAppointmentType(value) {
+  if (!value) return '-'
+  return String(value)
+    .toLowerCase()
+    .replace(/\b\w/g, (char) => char.toUpperCase())
+}
+
+function formatPhone(value) {
+  if (!value) return '-'
+  const digits = String(value).replace(/\D/g, '')
+  const normalized = digits.length === 11 && digits.startsWith('1')
+    ? digits.slice(1)
+    : digits
+
+  if (normalized.length === 10) {
+    return `${normalized.slice(0, 3)}-${normalized.slice(3, 6)}-${normalized.slice(6)}`
+  }
+
+  return String(value).trim()
 }
 </script>
 

@@ -459,7 +459,7 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 
-const API_BASE = 'https://n8n.getnapsolutions.com/webhook'
+const API_BASE = '/api/nap'
 const MINUTES_CAP = 1000
 
 const loading = ref(true)
@@ -662,11 +662,11 @@ async function loadAll() {
   errors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
 
   const tasks = [
-    fetchJson(`${API_BASE}/nap/overview`),
-    fetchJson(`${API_BASE}/nap/analytics?range=${selectedRange.value}`),
-    fetchJson(`${API_BASE}/nap/calls`),
-    fetchJson(`${API_BASE}/nap/transcripts`),
-    fetchJson(`${API_BASE}/nap/invoices`),
+    fetchJson(`${API_BASE}/overview`),
+    fetchJson(`${API_BASE}/analytics?range=${selectedRange.value}`),
+    fetchJson(`${API_BASE}/calls`),
+    fetchJson(`${API_BASE}/transcripts`),
+    fetchJson(`${API_BASE}/invoices`),
   ]
 
   const [ovRes, anRes, callsRes, txRes, invRes] = await Promise.allSettled(tasks)
@@ -692,7 +692,7 @@ async function loadAll() {
 async function reloadAnalytics() {
   errors.value.analytics = ''
   try {
-    const data = await fetchJson(`${API_BASE}/nap/analytics?range=${selectedRange.value}`)
+    const data = await fetchJson(`${API_BASE}/analytics?range=${selectedRange.value}`)
     analytics.value = Array.isArray(data) ? data : []
   } catch {
     errors.value.analytics = 'Failed to load analytics.'

@@ -303,6 +303,44 @@ app.use((error, _req, res, _next) => {
   })
 })
 
+// ── NAP Analytics Proxy ───────────────────────────────────────────────────────
+// Forwards /api/nap/* to n8n server-side, bypassing browser CORS restrictions.
+const N8N_WEBHOOK_BASE = 'https://n8n.getnapsolutions.com/webhook'
+
+const napProxyRoutes = [
+  { path: '/api/nap/overview',    upstream: `${N8N_WEBHOOK_BASE}/nap/overview` },
+  { path: '/api/nap/calls',       upstream: `${N8N_WEBHOOK_BASE}/nap/calls` },
+  { path: '/api/nap/transcripts', upstream: `${N8N_WEBHOOK_BASE}/nap/transcripts` },
+  { path: '/api/nap/invoices',    upstream: `${N8N_WEBHOOK_BASE}/nap/invoices` },
+]
+
+for (const { path, upstream } of napProxyRoutes) {
+  app.get(path, async (_req, res) => {
+    try {
+      const response = await fetch(upstream, { headers: { Accept: 'application/json' } })
+      const text = await response.text()
+      res.status(response.status).set('Content-Type', 'application/json').send(text)
+    } catch (err) {
+      res.status(502).json({ error: 'Failed to reach n8n', detail: err.message })
+    }
+  })
+}
+
+app.get('/api/nap/analytics', async (req, res) => {
+  try {
+    const range = req.query.range ?? '1'
+    const response = await fetch(
+      `${N8N_WEBHOOK_BASE}/nap/analytics?range=${encodeURIComponent(range)}`,
+      { headers: { Accept: 'application/json' } },
+    )
+    const text = await response.text()
+    res.status(response.status).set('Content-Type', 'application/json').send(text)
+  } catch (err) {
+    res.status(502).json({ error: 'Failed to reach n8n', detail: err.message })
+  }
+})
+// ─────────────────────────────────────────────────────────────────────────────
+
 app.listen(port, () => {
   console.log(`NAP dashboard API listening on http://localhost:${port}`)
 })

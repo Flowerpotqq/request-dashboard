@@ -485,6 +485,10 @@ import { computed, onMounted, ref, watch } from 'vue'
 const API_BASE = '/api/nap'
 const MINUTES_CAP = 1000
 
+// Extract tenant token from /t/:token or /clinic/:token — null on the bare base URL
+const _pathMatch = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
+const tenantId = _pathMatch?.[1] ? decodeURIComponent(_pathMatch[1]).trim() : null
+
 const loading = ref(true)
 const selectedRange = ref(1)
 const invoiceFilter = ref('all')
@@ -724,15 +728,20 @@ async function fetchJson(url) {
 }
 
 async function loadAll() {
+  if (!tenantId) {
+    loading.value = false
+    return
+  }
   loading.value = true
   errors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
 
+  const tid = encodeURIComponent(tenantId)
   const tasks = [
-    fetchJson(`${API_BASE}/overview`),
-    fetchJson(`${API_BASE}/analytics?range=${selectedRange.value}`),
-    fetchJson(`${API_BASE}/calls`),
-    fetchJson(`${API_BASE}/transcripts`),
-    fetchJson(`${API_BASE}/invoices`),
+    fetchJson(`${API_BASE}/overview?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/analytics?tenantId=${tid}&range=${selectedRange.value}`),
+    fetchJson(`${API_BASE}/calls?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/transcripts?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/invoices?tenantId=${tid}`),
   ]
 
   const [ovRes, anRes, callsRes, txRes, invRes] = await Promise.allSettled(tasks)
@@ -756,9 +765,11 @@ async function loadAll() {
 }
 
 async function reloadAnalytics() {
+  if (!tenantId) return
   errors.value.analytics = ''
   try {
-    const data = await fetchJson(`${API_BASE}/analytics?range=${selectedRange.value}`)
+    const tid = encodeURIComponent(tenantId)
+    const data = await fetchJson(`${API_BASE}/analytics?tenantId=${tid}&range=${selectedRange.value}`)
     analytics.value = Array.isArray(data) ? data : []
   } catch {
     errors.value.analytics = 'Failed to load analytics.'

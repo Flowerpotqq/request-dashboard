@@ -315,9 +315,11 @@ const napProxyRoutes = [
 ]
 
 for (const { path, upstream } of napProxyRoutes) {
-  app.get(path, async (_req, res) => {
+  app.get(path, async (req, res) => {
     try {
-      const response = await fetch(upstream, { headers: { Accept: 'application/json' } })
+      const tenantId = String(req.query.tenantId || '').trim()
+      const qs = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ''
+      const response = await fetch(`${upstream}${qs}`, { headers: { Accept: 'application/json' } })
       const text = await response.text()
       res.status(response.status).set('Content-Type', 'application/json').send(text)
     } catch (err) {
@@ -329,8 +331,10 @@ for (const { path, upstream } of napProxyRoutes) {
 app.get('/api/nap/analytics', async (req, res) => {
   try {
     const range = req.query.range ?? '1'
+    const tenantId = String(req.query.tenantId || '').trim()
+    const tenantQs = tenantId ? `&tenantId=${encodeURIComponent(tenantId)}` : ''
     const response = await fetch(
-      `${N8N_WEBHOOK_BASE}/nap/analytics?range=${encodeURIComponent(range)}`,
+      `${N8N_WEBHOOK_BASE}/nap/analytics?range=${encodeURIComponent(range)}${tenantQs}`,
       { headers: { Accept: 'application/json' } },
     )
     const text = await response.text()

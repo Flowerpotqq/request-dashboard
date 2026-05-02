@@ -295,7 +295,8 @@ const payloadEntries = computed(() => {
     }
 
     if (key === 'date_of_birth') {
-      const d = new Date(String(rawValue))
+      const s = String(rawValue).trim()
+      const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(s) ? `${s}T12:00:00` : s)
       if (!Number.isNaN(d.getTime())) {
         return d.toLocaleDateString('en-US', {
           month: 'short',
@@ -339,7 +340,7 @@ const patientDateOfBirth = computed(() => {
   const raw = props.request?.rawPayload?.date_of_birth
   if (!raw) return ''
   const clean = String(raw).replace(/^=/, '').trim()
-  const d = new Date(clean)
+  const d = new Date(/^\d{4}-\d{2}-\d{2}$/.test(clean) ? `${clean}T12:00:00` : clean)
   if (!Number.isNaN(d.getTime())) {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
   }

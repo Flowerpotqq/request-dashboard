@@ -190,8 +190,16 @@
                   <p class="a-card-sub">Click any row to view the full transcript</p>
                 </div>
                 <div class="calls-meta" v-if="!errors.calls">
-                  <span class="meta-pill">{{ calls.length }} calls</span>
+                  <span class="meta-pill">{{ filteredCalls.length }}{{ callSearch ? ` / ${calls.length}` : '' }} calls</span>
                 </div>
+              </div>
+              <div v-if="!errors.calls" class="search-filter-bar">
+                <input v-model="callSearch" type="text" placeholder="Search by date, phone, or name…" class="nap-input search-input" />
+                <select v-model="callSentimentSort" class="nap-input range-select">
+                  <option value="">Sentiment: Default</option>
+                  <option value="pos">Positive First</option>
+                  <option value="neg">Negative First</option>
+                </select>
               </div>
               <div v-if="errors.calls" class="section-error">{{ errors.calls }}</div>
               <div v-else class="table-wrap">
@@ -203,7 +211,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="call in calls" :key="call.id" @click="openTranscript(call)" class="call-row">
+                    <tr v-for="call in filteredCalls" :key="call.id" @click="openTranscript(call)" class="call-row">
                       <td>{{ fmtDate(call.date) }}</td>
                       <td class="font-mono">{{ fmtPhone(call.from) }}</td>
                       <td>{{ fmtDurationMin(call.duration_min || 0) }}</td>
@@ -212,8 +220,8 @@
                       <td><span :class="call.hasRecording ? 'check-yes' : 'check-no'">{{ call.hasRecording ? '✓' : '–' }}</span></td>
                       <td><span :class="call.hasTranscript ? 'check-yes' : 'check-no'">{{ call.hasTranscript ? '✓' : '–' }}</span></td>
                     </tr>
-                    <tr v-if="calls.length === 0">
-                      <td colspan="7" class="empty-cell">No calls found.</td>
+                    <tr v-if="filteredCalls.length === 0">
+                      <td colspan="7" class="empty-cell">{{ callSearch ? 'No calls match your search.' : 'No calls found.' }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -224,36 +232,51 @@
           <!-- ── TRANSCRIPTS ── -->
           <div v-else-if="activeSection === 'transcripts'" class="a-view">
             <div v-if="errors.transcripts" class="glass-card a-card section-error">{{ errors.transcripts }}</div>
-            <div v-else-if="transcripts.length === 0" class="glass-card a-card section-empty">No transcripts available.</div>
-            <div v-else class="transcript-list">
-              <div
-                v-for="tx in transcripts"
-                :key="tx.call_id"
-                class="transcript-card glass-card"
-                @click="activeTranscript = tx"
-              >
-                <div class="tx-card__head">
-                  <div>
-                    <div class="tx-card__date">{{ fmtDate(tx.date) }}</div>
-                    <div class="tx-card__meta">{{ fmtDurationMin(tx.duration_min || 0) }}</div>
-                  </div>
-                  <div class="tx-card__right">
-                    <span :class="['badge', sentimentBadge(tx.sentiment)]">{{ tx.sentiment || 'Neutral' }}</span>
-                    <span class="tx-card__status">{{ tx.status || '' }}</span>
-                  </div>
-                </div>
-                <div class="tx-card__summary">{{ tx.summary || 'No summary available.' }}</div>
-                <div class="tx-card__preview" v-if="tx.transcript && tx.transcript.length">
-                  <span class="tx-preview-line" v-for="(line, i) in tx.transcript.slice(0, 2)" :key="i">
-                    <strong>{{ line.speaker }}:</strong> {{ line.text }}
-                  </span>
-                </div>
-                <div class="tx-card__cta">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                  View full transcript
+            <template v-else>
+              <div class="glass-card a-card mb-4">
+                <div class="search-filter-bar">
+                  <input v-model="txSearch" type="text" placeholder="Search by date, name, or summary…" class="nap-input search-input" />
+                  <select v-model="txSentimentSort" class="nap-input range-select">
+                    <option value="">Sentiment: Default</option>
+                    <option value="pos">Positive First</option>
+                    <option value="neg">Negative First</option>
+                  </select>
+                  <span class="meta-pill">{{ filteredTranscripts.length }}{{ txSearch ? ` / ${transcripts.length}` : '' }}</span>
                 </div>
               </div>
-            </div>
+              <div v-if="filteredTranscripts.length === 0" class="glass-card a-card section-empty">
+                {{ txSearch ? 'No transcripts match your search.' : 'No transcripts available.' }}
+              </div>
+              <div v-else class="transcript-list">
+                <div
+                  v-for="tx in filteredTranscripts"
+                  :key="tx.call_id"
+                  class="transcript-card glass-card"
+                  @click="activeTranscript = tx"
+                >
+                  <div class="tx-card__head">
+                    <div>
+                      <div class="tx-card__date">{{ fmtDate(tx.date) }}</div>
+                      <div class="tx-card__meta">{{ fmtDurationMin(tx.duration_min || 0) }}</div>
+                    </div>
+                    <div class="tx-card__right">
+                      <span :class="['badge', sentimentBadge(tx.sentiment)]">{{ tx.sentiment || 'Neutral' }}</span>
+                      <span class="tx-card__status">{{ tx.status || '' }}</span>
+                    </div>
+                  </div>
+                  <div class="tx-card__summary">{{ tx.summary || 'No summary available.' }}</div>
+                  <div class="tx-card__preview" v-if="tx.transcript && tx.transcript.length">
+                    <span class="tx-preview-line" v-for="(line, i) in tx.transcript.slice(0, 2)" :key="i">
+                      <strong>{{ line.speaker }}:</strong> {{ line.text }}
+                    </span>
+                  </div>
+                  <div class="tx-card__cta">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    View full transcript
+                  </div>
+                </div>
+              </div>
+            </template>
           </div>
 
           <!-- ── INVOICES ── -->
@@ -478,6 +501,11 @@ const activeTranscript = ref(null)
 
 const errors = ref({ overview: '', analytics: '', calls: '', transcripts: '', invoices: '' })
 
+const callSearch = ref('')
+const callSentimentSort = ref('')
+const txSearch = ref('')
+const txSentimentSort = ref('')
+
 const rangeOptions = [
   { label: 'Hourly',   value: 0 },
   { label: 'Daily',    value: 1 },
@@ -612,6 +640,44 @@ const planStats = computed(() => [
   { label: 'Total Recordings',  value: overview.value.totalRecordings ?? '—' },
   { label: 'Total Transcripts', value: overview.value.totalTranscripts ?? '—' },
 ])
+
+function applySentimentSort(list, dir) {
+  if (!dir) return list
+  const rank = { positive: 0, neutral: 1, negative: 2 }
+  return [...list].sort((a, b) => {
+    const ra = rank[(a.sentiment || 'neutral').toLowerCase()] ?? 1
+    const rb = rank[(b.sentiment || 'neutral').toLowerCase()] ?? 1
+    return dir === 'pos' ? ra - rb : rb - ra
+  })
+}
+
+const filteredCalls = computed(() => {
+  const q = callSearch.value.trim().toLowerCase()
+  let list = calls.value
+  if (q) {
+    list = list.filter(call => {
+      const date = fmtDate(call.date).toLowerCase()
+      const phone = fmtPhone(call.from).toLowerCase()
+      const name = String(call.name || call.caller_name || '').toLowerCase()
+      return date.includes(q) || phone.includes(q) || name.includes(q)
+    })
+  }
+  return applySentimentSort(list, callSentimentSort.value)
+})
+
+const filteredTranscripts = computed(() => {
+  const q = txSearch.value.trim().toLowerCase()
+  let list = transcripts.value
+  if (q) {
+    list = list.filter(tx => {
+      const date = fmtDate(tx.date).toLowerCase()
+      const name = String(tx.name || tx.caller_name || '').toLowerCase()
+      const summary = String(tx.summary || '').toLowerCase()
+      return date.includes(q) || name.includes(q) || summary.includes(q)
+    })
+  }
+  return applySentimentSort(list, txSentimentSort.value)
+})
 
 function setSection(id) {
   activeSection.value = id
@@ -958,6 +1024,8 @@ function openTranscript(call) {
 .section-empty { color: var(--c-text-3); font-size: 13px; }
 .calls-meta { display: flex; align-items: center; gap: 8px; }
 .meta-pill { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: rgba(91,63,143,0.07); color: var(--c-text-3); border: 1px solid var(--border-color); }
+.search-filter-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.search-input { flex: 1; min-width: 180px; }
 
 /* ── Chart ──────────────────────────────────────────────── */
 .chart-wrap { display: flex; align-items: flex-end; gap: 8px; min-height: 200px; padding: 8px 0; overflow-x: auto; }

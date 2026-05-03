@@ -813,6 +813,16 @@ function sentimentBadge(sentiment) {
 }
 function shortLabel(label) {
   if (!label) return '-'
+  // Hourly labels come back as UTC "HH:MM" strings — convert to local time
+  const hourlyMatch = String(label).match(/^(\d{2}):(\d{2})$/)
+  if (hourlyMatch) {
+    const now = new Date()
+    const utc = new Date(Date.UTC(
+      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+      Number(hourlyMatch[1]), Number(hourlyMatch[2]),
+    ))
+    return utc.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+  }
   const d = new Date(`${label}T12:00:00`)
   if (Number.isNaN(d.getTime())) return String(label)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })

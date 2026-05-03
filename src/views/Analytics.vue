@@ -749,7 +749,7 @@ async function loadAll() {
   if (ovRes.status === 'fulfilled')    overview.value    = ovRes.value || {}
   else errors.value.overview    = 'Failed to load overview.'
 
-  if (anRes.status === 'fulfilled')    analytics.value   = Array.isArray(anRes.value) ? anRes.value : []
+  if (anRes.status === 'fulfilled')    analytics.value   = filterHourly(Array.isArray(anRes.value) ? anRes.value : [])
   else errors.value.analytics   = 'Failed to load analytics.'
 
   if (callsRes.status === 'fulfilled') calls.value       = Array.isArray(callsRes.value?.calls) ? callsRes.value.calls : []
@@ -764,13 +764,24 @@ async function loadAll() {
   loading.value = false
 }
 
+function filterHourly(data) {
+  if (selectedRange.value !== 0) return data
+  const now = new Date()
+  const nowMinutes = now.getHours() * 60 + now.getMinutes()
+  return data.filter((point) => {
+    const m = String(point.label || '').match(/^(\d{2}):(\d{2})$/)
+    if (!m) return true
+    return Number(m[1]) * 60 + Number(m[2]) <= nowMinutes
+  })
+}
+
 async function reloadAnalytics() {
   if (!tenantId) return
   errors.value.analytics = ''
   try {
     const tid = encodeURIComponent(tenantId)
     const data = await fetchJson(`${API_BASE}/analytics?tenantId=${tid}&range=${selectedRange.value}`)
-    analytics.value = Array.isArray(data) ? data : []
+    analytics.value = filterHourly(Array.isArray(data) ? data : [])
   } catch {
     errors.value.analytics = 'Failed to load analytics.'
     analytics.value = []
@@ -813,16 +824,6 @@ function sentimentBadge(sentiment) {
 }
 function shortLabel(label) {
   if (!label) return '-'
-  // Hourly labels come back as UTC "HH:MM" strings — convert to local time
-  const hourlyMatch = String(label).match(/^(\d{2}):(\d{2})$/)
-  if (hourlyMatch) {
-    const now = new Date()
-    const utc = new Date(Date.UTC(
-      now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
-      Number(hourlyMatch[1]), Number(hourlyMatch[2]),
-    ))
-    return utc.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
-  }
   const d = new Date(`${label}T12:00:00`)
   if (Number.isNaN(d.getTime())) return String(label)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })

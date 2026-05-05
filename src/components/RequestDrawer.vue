@@ -253,6 +253,7 @@ const canRemoveGoogleCalendarHold = computed(() => {
 const payloadEntries = computed(() => {
   const payload = props.request?.rawPayload
   if (!payload || typeof payload !== 'object' || Array.isArray(payload)) return []
+  const hideAppointmentType = ['cancel', 'reschedule'].includes(props.request?.type)
 
   const labelMap = {
     practitioner: 'Practitioner',
@@ -271,7 +272,9 @@ const payloadEntries = computed(() => {
   ]
 
   const derivedValues = {
-    appointment_type: payload.appointment_type ?? payload.reason ?? props.request?.reason ?? '',
+    appointment_type: hideAppointmentType
+      ? ''
+      : (payload.appointment_type ?? payload.reason ?? props.request?.reason ?? ''),
   }
 
   function toTitleCase(text) {
@@ -321,6 +324,7 @@ const payloadEntries = computed(() => {
   }
 
   return keyOrder
+    .filter((key) => !(hideAppointmentType && key === 'appointment_type'))
     .filter((key) => Object.prototype.hasOwnProperty.call(payload, key) || derivedValues[key])
     .map((key) => {
       const rawValue = Object.prototype.hasOwnProperty.call(payload, key)

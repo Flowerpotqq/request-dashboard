@@ -206,13 +206,13 @@
                 <table class="nap-table">
                   <thead>
                     <tr>
-                      <th>Date</th><th>From</th><th>Duration</th>
+                      <th>Date &amp; Time</th><th>From</th><th>Duration</th>
                       <th>Status</th><th>Sentiment</th><th>Rec.</th><th>Transcript</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr v-for="call in filteredCalls" :key="call.id" @click="openTranscript(call)" class="call-row">
-                      <td>{{ fmtDate(call.date) }}</td>
+                      <td>{{ fmtDateTime(call.date) }}</td>
                       <td class="font-mono">{{ fmtPhone(call.from) }}</td>
                       <td>{{ fmtDurationMin(call.duration_min || 0) }}</td>
                       <td><span :class="['badge', statusBadge(call.status)]">{{ displayStatus(call.status) }}</span></td>
@@ -256,7 +256,7 @@
                 >
                   <div class="tx-card__head">
                     <div>
-                      <div class="tx-card__date">{{ fmtDate(tx.date) }}</div>
+                      <div class="tx-card__date">{{ fmtDateTime(tx.date) }}</div>
                       <div class="tx-card__meta">{{ fmtDurationMin(tx.duration_min || 0) }}</div>
                     </div>
                     <div class="tx-card__right">
@@ -439,7 +439,7 @@
       <div v-if="activeTranscript" class="drawer-panel">
         <div class="drawer-header">
           <div>
-            <div class="font-bold text-[15px]">{{ fmtDate(activeTranscript.date) }}</div>
+            <div class="font-bold text-[15px]">{{ fmtDateTime(activeTranscript.date) }}</div>
             <div class="flex items-center gap-2 mt-1">
               <span class="text-[12px] text-nap-text-3">{{ fmtDurationMin(activeTranscript.duration_min || 0) }}</span>
               <span v-if="activeTranscript.sentiment" :class="['badge', sentimentBadge(activeTranscript.sentiment)]">{{ activeTranscript.sentiment }}</span>
@@ -660,7 +660,7 @@ const filteredCalls = computed(() => {
   let list = calls.value
   if (q) {
     list = list.filter(call => {
-      const date = fmtDate(call.date).toLowerCase()
+      const date = fmtDateTime(call.date).toLowerCase()
       const phone = fmtPhone(call.from).toLowerCase()
       const name = String(call.name || call.caller_name || '').toLowerCase()
       return date.includes(q) || phone.includes(q) || name.includes(q)
@@ -674,7 +674,7 @@ const filteredTranscripts = computed(() => {
   let list = transcripts.value
   if (q) {
     list = list.filter(tx => {
-      const date = fmtDate(tx.date).toLowerCase()
+      const date = fmtDateTime(tx.date).toLowerCase()
       const name = String(tx.name || tx.caller_name || '').toLowerCase()
       const summary = String(tx.summary || '').toLowerCase()
       return date.includes(q) || name.includes(q) || summary.includes(q)
@@ -798,6 +798,16 @@ function fmtDate(dateStr) {
   const d = new Date(`${dateStr}T12:00:00`)
   if (Number.isNaN(d.getTime())) return String(dateStr)
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
+function fmtDateTime(dateStr) {
+  if (!dateStr) return '-'
+  const hasTime = /[T ](\d{1,2}:)/.test(String(dateStr))
+  const d = hasTime ? new Date(dateStr) : new Date(`${dateStr}T12:00:00`)
+  if (Number.isNaN(d.getTime())) return String(dateStr)
+  const datePart = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+  if (!hasTime) return datePart
+  const timePart = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
+  return `${datePart}, ${timePart}`
 }
 function fmtDurationMin(durationMin) {
   const totalSeconds = Math.max(0, Math.round(Number(durationMin || 0) * 60))

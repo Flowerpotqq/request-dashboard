@@ -181,12 +181,6 @@
         </div>
       </div>
 
-      <Transition name="overlay">
-        <div v-if="toastMessage" :class="['drawer-toast', toastType === 'error' ? 'drawer-toast-error' : 'drawer-toast-success']">
-          {{ toastMessage }}
-        </div>
-      </Transition>
-
     </div>
   </Transition>
 </template>
@@ -200,12 +194,9 @@ const props = defineProps({
   request: { type: Object, default: null }
 })
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'notify'])
 const store = useRequestsStore()
 const updating = ref(false)
-const toastMessage = ref('')
-const toastType = ref('success')
-let toastTimer = null
 
 const typeBadgeClass = computed(() => {
   switch (props.request?.type) {
@@ -379,6 +370,10 @@ async function handleConfirm() {
   updating.value = true
   try {
     await store.updateRequestStatus(props.request.id, 'completed')
+    emit('notify', { message: 'Request marked as completed', type: 'success' })
+    emit('close')
+  } catch (_error) {
+    emit('notify', { message: 'Failed to update request', type: 'error' })
   } finally {
     updating.value = false
   }
@@ -389,6 +384,10 @@ async function handleDeny() {
   updating.value = true
   try {
     await store.updateRequestStatus(props.request.id, 'denied')
+    emit('notify', { message: 'Request denied', type: 'success' })
+    emit('close')
+  } catch (_error) {
+    emit('notify', { message: 'Failed to update request', type: 'error' })
   } finally {
     updating.value = false
   }
@@ -399,22 +398,13 @@ async function handleReopen() {
   updating.value = true
   try {
     await store.updateRequestStatus(props.request.id, 'pending')
+    emit('notify', { message: 'Request reopened', type: 'success' })
+    emit('close')
+  } catch (_error) {
+    emit('notify', { message: 'Failed to update request', type: 'error' })
   } finally {
     updating.value = false
   }
-}
-
-function showToast(message, type = 'success') {
-  toastMessage.value = message
-  toastType.value = type
-
-  if (toastTimer) {
-    clearTimeout(toastTimer)
-  }
-
-  toastTimer = setTimeout(() => {
-    toastMessage.value = ''
-  }, 2500)
 }
 
 async function handleRemoveGoogleCalendarHold() {
@@ -432,9 +422,10 @@ async function handleRemoveGoogleCalendarHold() {
       calendar_id: payload.calendar_id,
       practitioner: payload.practitioner,
     })
-    showToast('Calendar hold removed', 'success')
+    emit('notify', { message: 'Calendar hold removed', type: 'success' })
+    emit('close')
   } catch (_error) {
-    showToast('Failed to remove calendar hold', 'error')
+    emit('notify', { message: 'Failed to remove calendar hold', type: 'error' })
   } finally {
     updating.value = false
   }
@@ -552,27 +543,4 @@ function formatPhone(value) {
   justify-content: center;
 }
 
-.drawer-toast {
-  position: absolute;
-  right: 18px;
-  bottom: 18px;
-  z-index: 600;
-  padding: 8px 12px;
-  border-radius: 9px;
-  font-size: 12px;
-  font-weight: 700;
-  border: 1px solid transparent;
-}
-
-.drawer-toast-success {
-  background: var(--ok-light);
-  color: var(--c-teal-dark);
-  border-color: var(--ok-border);
-}
-
-.drawer-toast-error {
-  background: var(--danger-light);
-  color: #b02040;
-  border-color: var(--danger-border);
-}
 </style>

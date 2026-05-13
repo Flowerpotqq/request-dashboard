@@ -230,7 +230,18 @@
     <RequestDrawer
       :request="store.selectedRequest"
       @close="store.closeDrawer()"
+      @notify="handleNotify"
     />
+
+    <!-- Non-blocking dashboard toast -->
+    <Transition name="page-toast">
+      <div
+        v-if="toastMessage"
+        :class="['page-toast', toastType === 'error' ? 'page-toast-error' : 'page-toast-success']"
+      >
+        {{ toastMessage }}
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -243,6 +254,17 @@ import RequestDrawer from '@/components/RequestDrawer.vue'
 const store = useRequestsStore()
 
 const page = ref(1)
+const toastMessage = ref('')
+const toastType = ref('success')
+let toastTimer = null
+
+function handleNotify({ message, type = 'success' }) {
+  toastMessage.value = message
+  toastType.value = type
+  if (toastTimer) clearTimeout(toastTimer)
+  toastTimer = setTimeout(() => { toastMessage.value = '' }, 2500)
+}
+
 const PER_PAGE = 15
 
 const filterTabs = computed(() => [
@@ -469,4 +491,36 @@ function formatPhone(value) {
 .request-row { transition: background .1s ease; }
 
 .chevron-cell { text-align: right; padding-right: 16px !important; }
+
+/* Viewport-level non-blocking toast */
+.page-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 500;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  pointer-events: none;
+}
+.page-toast-success {
+  background: var(--ok-light);
+  color: var(--c-teal-dark);
+  border-color: var(--ok-border);
+}
+.page-toast-error {
+  background: var(--danger-light);
+  color: #b02040;
+  border-color: var(--danger-border);
+}
+.page-toast-enter-active, .page-toast-leave-active {
+  transition: opacity .2s ease, transform .2s ease;
+}
+.page-toast-enter-from, .page-toast-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
 </style>

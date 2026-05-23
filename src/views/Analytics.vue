@@ -174,10 +174,6 @@
                 <div class="stat-title">Completed Calls</div>
                 <div class="stat-num text-grad-primary">{{ analytics.reduce((s, p) => s + (p.completed || 0), 0) }}</div>
               </div>
-              <div class="stat-card glass-card" style="animation-delay:210ms">
-                <div class="stat-title">Missed Calls</div>
-                <div class="stat-num text-grad-accent">{{ analytics.reduce((s, p) => s + (p.missed || 0), 0) }}</div>
-              </div>
             </div>
           </div>
 

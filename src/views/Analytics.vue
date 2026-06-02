@@ -423,6 +423,227 @@
             </div>
           </div>
 
+          <!-- ── OUTBOUND OVERVIEW ── -->
+          <div v-else-if="activeSection === 'ob-overview'" class="a-view">
+            <div class="ob-section-badge">OUTBOUND</div>
+            <div class="stats-row">
+              <div
+                v-for="(card, i) in obStatCards"
+                :key="card.title"
+                class="stat-card glass-card"
+                :style="{ animationDelay: `${i * 70}ms` }"
+              >
+                <div class="stat-icon-chip"><span v-html="card.icon"></span></div>
+                <div class="stat-title">{{ card.title }}</div>
+                <div v-if="obErrors.overview" class="stat-error">{{ obErrors.overview }}</div>
+                <template v-else>
+                  <div :class="['stat-num', `text-grad-${card.gradient}`]">{{ card.value }}</div>
+                  <template v-if="card.progress !== undefined">
+                    <div class="progress-wrap mt-2">
+                      <div class="progress-fill" :style="{ width: `${card.progress}%` }"></div>
+                    </div>
+                    <div class="stat-sub">{{ card.sub }}</div>
+                  </template>
+                  <div v-else-if="card.sub" class="stat-sub">{{ card.sub }}</div>
+                </template>
+              </div>
+            </div>
+            <div class="glass-card a-card mt-4" v-if="!obErrors.overview">
+              <h3 class="a-card-title mb-3">Outbound Billing Summary</h3>
+              <div class="quick-stats">
+                <div class="quick-stat">
+                  <div class="quick-stat__label">Billing Period</div>
+                  <div class="quick-stat__val">{{ outboundOverview.billingPeriod || '—' }}</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat__label">Minutes Included</div>
+                  <div class="quick-stat__val">{{ fmtNumber(OB_MINUTES_CAP) }}</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat__label">Calls Today</div>
+                  <div class="quick-stat__val">{{ outboundOverview.callsToday ?? '—' }}</div>
+                </div>
+                <div class="quick-stat">
+                  <div class="quick-stat__label">Completed Today</div>
+                  <div class="quick-stat__val">{{ outboundOverview.completedToday ?? '—' }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── OUTBOUND ANALYTICS ── -->
+          <div v-else-if="activeSection === 'ob-analytics'" class="a-view">
+            <div class="ob-section-badge">OUTBOUND</div>
+            <div class="glass-card a-card">
+              <div class="a-card-head">
+                <div>
+                  <h3 class="a-card-title">Outbound Call Volume</h3>
+                  <p class="a-card-sub">Outbound calls over time — select a range</p>
+                </div>
+                <select v-model.number="outboundRange" class="nap-input range-select">
+                  <option v-for="opt in rangeOptions" :key="opt.value" :value="opt.value">{{ opt.label }}</option>
+                </select>
+              </div>
+              <div v-if="obErrors.analytics" class="section-error">{{ obErrors.analytics }}</div>
+              <div v-else-if="outboundAnalytics.length === 0" class="section-empty">No data for this range.</div>
+              <div v-else class="chart-wrap">
+                <div v-for="point in outboundAnalytics" :key="point.label" class="chart-bar-col">
+                  <div class="chart-value">{{ point.calls || 0 }}</div>
+                  <div class="chart-bar-track">
+                    <div class="chart-bar-fill chart-bar-fill--ob" :style="{ height: `${obBarHeight(point.calls)}%` }"></div>
+                  </div>
+                  <div class="chart-label">{{ shortLabel(point.label) }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-row mt-4" v-if="outboundAnalytics.length">
+              <div class="stat-card glass-card" style="animation-delay:0ms">
+                <div class="stat-title">Total Calls (Range)</div>
+                <div class="stat-num text-grad-primary">{{ outboundAnalytics.reduce((s, p) => s + (p.calls || 0), 0) }}</div>
+              </div>
+              <div class="stat-card glass-card" style="animation-delay:70ms">
+                <div class="stat-title">Total Minutes (Range)</div>
+                <div class="stat-num text-grad-accent">{{ fmtNumber(outboundAnalytics.reduce((s, p) => s + (p.minutes || 0), 0)) }}m</div>
+              </div>
+              <div class="stat-card glass-card" style="animation-delay:140ms">
+                <div class="stat-title">Completed Calls</div>
+                <div class="stat-num text-grad-primary">{{ outboundAnalytics.reduce((s, p) => s + (p.completed || 0), 0) }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── OUTBOUND CALL LOGS ── -->
+          <div v-else-if="activeSection === 'ob-calls'" class="a-view">
+            <div class="ob-section-badge">OUTBOUND</div>
+            <div class="glass-card a-card">
+              <div class="a-card-head">
+                <div>
+                  <h3 class="a-card-title">Outbound Call Logs</h3>
+                  <p class="a-card-sub">Click a row to view the full transcript</p>
+                </div>
+                <div class="calls-meta" v-if="!obErrors.calls">
+                  <span class="meta-pill">{{ filteredObCalls.length }}{{ obCallSearch ? ` / ${obCalls.length}` : '' }} calls</span>
+                </div>
+              </div>
+              <div v-if="!obErrors.calls" class="search-filter-bar">
+                <input v-model="obCallSearch" type="text" placeholder="Search by date or phone…" class="nap-input search-input" />
+              </div>
+              <div v-if="obErrors.calls" class="section-error">{{ obErrors.calls }}</div>
+              <div v-else class="table-wrap">
+                <table class="nap-table">
+                  <thead>
+                    <tr>
+                      <th>Date &amp; Time</th><th>To</th><th>Duration</th>
+                      <th>Status</th><th>Sentiment</th><th>Rec.</th><th>Transcript</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="call in filteredObCalls" :key="call.id" @click="openObTranscript(call)" class="call-row">
+                      <td>{{ fmtDateTime(call.timestamp || call.date) }}</td>
+                      <td class="font-mono">{{ fmtPhone(call.from) }}</td>
+                      <td>{{ fmtDurationMin(call.duration_min || 0) }}</td>
+                      <td><span :class="['badge', statusBadge(call.status)]">{{ displayStatus(call.status) }}</span></td>
+                      <td><span :class="['badge', sentimentBadge(call.sentiment)]">{{ call.sentiment || 'Neutral' }}</span></td>
+                      <td><span :class="call.hasRecording ? 'check-yes' : 'check-no'">{{ call.hasRecording ? '✓' : '–' }}</span></td>
+                      <td><span :class="call.hasTranscript ? 'check-yes' : 'check-no'">{{ call.hasTranscript ? '✓' : '–' }}</span></td>
+                    </tr>
+                    <tr v-if="filteredObCalls.length === 0">
+                      <td colspan="7" class="empty-cell">{{ obCallSearch ? 'No calls match your search.' : 'No outbound calls found.' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── OUTBOUND TRANSCRIPTS ── -->
+          <div v-else-if="activeSection === 'ob-transcripts'" class="a-view">
+            <div class="ob-section-badge">OUTBOUND</div>
+            <div v-if="obErrors.transcripts" class="glass-card a-card section-error">{{ obErrors.transcripts }}</div>
+            <template v-else>
+              <div class="glass-card a-card mb-4">
+                <div class="search-filter-bar">
+                  <input v-model="obTxSearch" type="text" placeholder="Search by date or summary…" class="nap-input search-input" />
+                  <span class="meta-pill">{{ filteredObTranscripts.length }}{{ obTxSearch ? ` / ${obTranscripts.length}` : '' }}</span>
+                </div>
+              </div>
+              <div v-if="filteredObTranscripts.length === 0" class="glass-card a-card section-empty">
+                {{ obTxSearch ? 'No transcripts match your search.' : 'No outbound transcripts available.' }}
+              </div>
+              <div v-else class="transcript-list">
+                <div
+                  v-for="tx in filteredObTranscripts"
+                  :key="tx.call_id"
+                  class="transcript-card glass-card"
+                  @click="activeTranscript = tx"
+                >
+                  <div class="tx-card__head">
+                    <div>
+                      <div class="tx-card__date">{{ fmtDateTime(tx.timestamp || tx.date) }}</div>
+                      <div class="tx-card__meta">{{ fmtDurationMin(tx.duration_min || 0) }}</div>
+                    </div>
+                    <div class="tx-card__right">
+                      <span :class="['badge', sentimentBadge(tx.sentiment)]">{{ tx.sentiment || 'Neutral' }}</span>
+                      <span class="tx-card__status">{{ tx.status || '' }}</span>
+                    </div>
+                  </div>
+                  <div class="tx-card__summary">{{ tx.summary || 'No summary available.' }}</div>
+                  <div class="tx-card__preview" v-if="tx.transcript && tx.transcript.length">
+                    <span class="tx-preview-line" v-for="(line, i) in tx.transcript.slice(0, 2)" :key="i">
+                      <strong>{{ line.speaker }}:</strong> {{ line.text }}
+                    </span>
+                  </div>
+                  <div class="tx-card__cta">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    View full transcript
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- ── OUTBOUND INVOICES ── -->
+          <div v-else-if="activeSection === 'ob-invoices'" class="a-view">
+            <div class="ob-section-badge">OUTBOUND</div>
+            <div class="glass-card a-card">
+              <div class="a-card-head">
+                <div>
+                  <h3 class="a-card-title">Outbound Invoices</h3>
+                  <p class="a-card-sub">Outbound billing history and payment status</p>
+                </div>
+                <select v-model="obInvoiceFilter" class="nap-input range-select">
+                  <option value="all">All</option>
+                  <option value="paid">Paid</option>
+                  <option value="pending">Pending</option>
+                </select>
+              </div>
+              <div v-if="obErrors.invoices" class="section-error">{{ obErrors.invoices }}</div>
+              <div v-else class="table-wrap">
+                <table class="nap-table">
+                  <thead>
+                    <tr><th>Period</th><th>Amount</th><th>Minutes</th><th>Status</th><th>Date</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="inv in filteredObInvoices" :key="inv.id">
+                      <td>{{ inv.period }}</td>
+                      <td class="font-bold">{{ inv.amount }}</td>
+                      <td>{{ inv.minutes }}</td>
+                      <td>
+                        <span :class="['badge', inv.paid ? 'badge-completed' : 'badge-pending']">
+                          <span class="badge-dot"></span>{{ inv.paid ? 'Paid' : 'Pending' }}
+                        </span>
+                      </td>
+                      <td>{{ fmtDate(inv.date) }}</td>
+                    </tr>
+                    <tr v-if="filteredObInvoices.length === 0">
+                      <td colspan="5" class="empty-cell">No outbound invoices found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </template>
       </div>
     </div>
@@ -484,6 +705,7 @@ const MINUTES_CAP = 1000
 // Extract tenant token from /t/:token or /clinic/:token — null on the bare base URL
 const _pathMatch = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
 const tenantId = _pathMatch?.[1] ? decodeURIComponent(_pathMatch[1]).trim() : null
+const hasOutbound = ref(false)
 
 const loading = ref(true)
 const selectedRange = ref(1)
@@ -505,6 +727,19 @@ const callSearch = ref('')
 const callSentimentSort = ref('')
 const txSearch = ref('')
 const txSentimentSort = ref('')
+
+// Outbound refs (Recoup Health only)
+const outboundOverview = ref({})
+const outboundAnalytics = ref([])
+const obCalls = ref([])
+const obTranscripts = ref([])
+const obInvoices = ref([])
+const outboundRange = ref(1)
+const obInvoiceFilter = ref('all')
+const obErrors = ref({ overview: '', analytics: '', calls: '', transcripts: '', invoices: '' })
+const obCallSearch = ref('')
+const obTxSearch = ref('')
+const OB_MINUTES_CAP = 1000
 
 const rangeOptions = [
   { label: 'Hourly',   value: 0 },
@@ -531,7 +766,7 @@ const ICONS = {
   wave:     `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`,
 }
 
-const navSections = [
+const navSections = computed(() => [
   {
     label: 'DASHBOARD',
     items: [
@@ -553,6 +788,16 @@ const navSections = [
       { id: 'overage',      label: 'Overage Invoices',  icon: ICONS.trending },
     ],
   },
+  ...(hasOutbound.value ? [{
+    label: 'OUTBOUND',
+    items: [
+      { id: 'ob-overview',     label: 'Overview',    icon: ICONS.grid },
+      { id: 'ob-analytics',   label: 'Analytics',   icon: ICONS.activity },
+      { id: 'ob-calls',       label: 'Call Logs',   icon: ICONS.phone },
+      { id: 'ob-transcripts', label: 'Transcripts', icon: ICONS.message },
+      { id: 'ob-invoices',    label: 'Invoices',    icon: ICONS.file },
+    ],
+  }] : []),
   {
     label: 'ACCOUNT',
     items: [
@@ -560,7 +805,7 @@ const navSections = [
       { id: 'contact',      label: 'Contact & Upgrade', icon: ICONS.mail },
     ],
   },
-]
+])
 
 const sectionMeta = {
   'overview':    { title: 'Overview',          sub: 'Your AI receptionist at a glance.' },
@@ -570,7 +815,12 @@ const sectionMeta = {
   'invoices':    { title: 'Invoices',          sub: 'Billing history and payment status.' },
   'overage':     { title: 'Overage Invoices',  sub: 'Usage and charges beyond your plan.' },
   'my-plan':     { title: 'My Plan',           sub: 'Your current plan details and usage.' },
-  'contact':     { title: 'Contact & Upgrade', sub: 'Get help or upgrade your NAP Solutions plan.' },
+  'contact':        { title: 'Contact & Upgrade',      sub: 'Get help or upgrade your NAP Solutions plan.' },
+  'ob-overview':    { title: 'Outbound Overview',       sub: 'Outbound calling activity at a glance.' },
+  'ob-analytics':   { title: 'Outbound Analytics',      sub: 'Outbound call volume and trends over time.' },
+  'ob-calls':       { title: 'Outbound Call Logs',      sub: 'All outbound calls from your campaign.' },
+  'ob-transcripts': { title: 'Outbound Transcripts',    sub: 'Full outbound conversation recordings and summaries.' },
+  'ob-invoices':    { title: 'Outbound Invoices',       sub: 'Outbound billing history and payment status.' },
 }
 
 const currentSectionTitle = computed(() => sectionMeta[activeSection.value]?.title ?? 'Analytics')
@@ -640,6 +890,80 @@ const planStats = computed(() => [
   { label: 'Total Recordings',  value: overview.value.totalRecordings ?? '—' },
   { label: 'Total Transcripts', value: overview.value.totalTranscripts ?? '—' },
 ])
+
+// Outbound computed properties
+const obMinutesUsed = computed(() => Number(outboundOverview.value?.minutesUsed || 0))
+const obBillingPct  = computed(() => Math.min(100, (obMinutesUsed.value / OB_MINUTES_CAP) * 100))
+
+const obStatCards = computed(() => [
+  {
+    title: 'Minutes Used',
+    value: `${fmtNumber(obMinutesUsed.value)} / ${fmtNumber(OB_MINUTES_CAP)}`,
+    sub: `${fmtNumber(obBillingPct.value)}% of plan`,
+    progress: obBillingPct.value,
+    gradient: 'primary',
+    icon: ICONS.clock,
+  },
+  {
+    title: 'Total Calls',
+    value: String(outboundOverview.value.totalCalls || 0),
+    sub: outboundOverview.value.billingPeriod || '',
+    gradient: 'accent',
+    icon: ICONS.phone,
+  },
+  {
+    title: 'Overage Cost',
+    value: money(outboundOverview.value.overageUSD || 0),
+    gradient: 'primary',
+    icon: ICONS.dollar,
+  },
+  {
+    title: 'Avg Call Duration',
+    value: fmtDurationMin(outboundOverview.value.avgCallMin || 0),
+    gradient: 'accent',
+    icon: ICONS.wave,
+  },
+])
+
+const obTranscriptByCallId = computed(() => {
+  const map = new Map()
+  for (const item of obTranscripts.value) {
+    if (item?.call_id) map.set(item.call_id, item)
+  }
+  return map
+})
+
+const filteredObInvoices = computed(() => {
+  if (obInvoiceFilter.value === 'all') return obInvoices.value
+  const paid = obInvoiceFilter.value === 'paid'
+  return obInvoices.value.filter((inv) => Boolean(inv.paid) === paid)
+})
+
+const obOverageInvoices = computed(() =>
+  obInvoices.value.filter((inv) => inv.isOverage || (inv.overageMin ?? 0) > 0)
+)
+
+const filteredObCalls = computed(() => {
+  const q = obCallSearch.value.trim().toLowerCase()
+  return q
+    ? obCalls.value.filter(call => {
+        const date = fmtDateTime(call.timestamp || call.date).toLowerCase()
+        const phone = fmtPhone(call.from).toLowerCase()
+        return date.includes(q) || phone.includes(q)
+      })
+    : obCalls.value
+})
+
+const filteredObTranscripts = computed(() => {
+  const q = obTxSearch.value.trim().toLowerCase()
+  return q
+    ? obTranscripts.value.filter(tx => {
+        const date = fmtDateTime(tx.timestamp || tx.date).toLowerCase()
+        const summary = String(tx.summary || '').toLowerCase()
+        return date.includes(q) || summary.includes(q)
+      })
+    : obTranscripts.value
+})
 
 function applySentimentSort(list, dir) {
   if (!dir) return list
@@ -730,8 +1054,18 @@ async function loadAll() {
   }
   loading.value = true
   errors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
+  obErrors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
 
   const tid = encodeURIComponent(tenantId)
+
+  // Resolve tenant capabilities (fast server-only call — no n8n involved)
+  try {
+    const caps = await fetchJson(`${API_BASE}/tenant?tenantId=${tid}`)
+    hasOutbound.value = !!caps.hasOutbound
+  } catch {
+    hasOutbound.value = false
+  }
+
   const tasks = [
     fetchJson(`${API_BASE}/overview?tenantId=${tid}`),
     fetchJson(`${API_BASE}/analytics?tenantId=${tid}&range=${selectedRange.value}`),
@@ -758,6 +1092,7 @@ async function loadAll() {
   else errors.value.invoices    = 'Failed to load invoices.'
 
   loading.value = false
+  if (hasOutbound.value) loadOutbound()
 }
 
 function filterHourly(data) {
@@ -785,6 +1120,7 @@ async function reloadAnalytics() {
 }
 
 watch(selectedRange, () => { reloadAnalytics() })
+watch(outboundRange, () => { reloadObAnalytics() })
 onMounted(() => { loadAll() })
 
 function fmtNumber(value)     { return Number(value || 0).toLocaleString('en-US', { maximumFractionDigits: 1 }) }
@@ -842,6 +1178,63 @@ function openTranscript(call) {
   const tx = transcriptByCallId.value.get(call.id)
   if (!tx) return
   activeTranscript.value = tx
+}
+function obBarHeight(callsCount) {
+  const max = Math.max(...outboundAnalytics.value.map((p) => Number(p.calls || 0)), 1)
+  return (Number(callsCount || 0) / max) * 100
+}
+function openObTranscript(call) {
+  const tx = obTranscriptByCallId.value.get(call.id)
+  if (!tx) return
+  activeTranscript.value = tx
+}
+
+function filterObHourly(data) {
+  if (outboundRange.value !== 0) return data
+  const now = new Date()
+  const nowMinutes = now.getHours() * 60 + now.getMinutes()
+  return data.filter((point) => {
+    const m = String(point.label || '').match(/^(\d{2}):(\d{2})$/)
+    if (!m) return true
+    return Number(m[1]) * 60 + Number(m[2]) <= nowMinutes
+  })
+}
+
+async function loadOutbound() {
+  if (!hasOutbound.value || !tenantId) return
+  const tid = encodeURIComponent(tenantId)
+  const OB = '/api/nap/outbound'
+  const tasks = [
+    fetchJson(`${OB}/overview?tenantId=${tid}`),
+    fetchJson(`${OB}/analytics?tenantId=${tid}&range=${outboundRange.value}`),
+    fetchJson(`${OB}/calls?tenantId=${tid}`),
+    fetchJson(`${OB}/transcripts?tenantId=${tid}`),
+    fetchJson(`${OB}/invoices?tenantId=${tid}`),
+  ]
+  const [ovRes, anRes, callsRes, txRes, invRes] = await Promise.allSettled(tasks)
+  if (ovRes.status === 'fulfilled')    outboundOverview.value  = ovRes.value || {}
+  else obErrors.value.overview         = 'Failed to load outbound overview.'
+  if (anRes.status === 'fulfilled')    outboundAnalytics.value = filterObHourly(Array.isArray(anRes.value) ? anRes.value : [])
+  else obErrors.value.analytics        = 'Failed to load outbound analytics.'
+  if (callsRes.status === 'fulfilled') obCalls.value           = Array.isArray(callsRes.value?.calls) ? callsRes.value.calls : []
+  else obErrors.value.calls            = 'Failed to load outbound calls.'
+  if (txRes.status === 'fulfilled')    obTranscripts.value     = Array.isArray(txRes.value?.transcripts) ? txRes.value.transcripts : []
+  else obErrors.value.transcripts      = 'Failed to load outbound transcripts.'
+  if (invRes.status === 'fulfilled')   obInvoices.value        = normalizeInvoices(invRes.value?.invoices)
+  else obErrors.value.invoices         = 'Failed to load outbound invoices.'
+}
+
+async function reloadObAnalytics() {
+  if (!hasOutbound.value || !tenantId) return
+  obErrors.value.analytics = ''
+  try {
+    const tid = encodeURIComponent(tenantId)
+    const data = await fetchJson(`/api/nap/outbound/analytics?tenantId=${tid}&range=${outboundRange.value}`)
+    outboundAnalytics.value = filterObHourly(Array.isArray(data) ? data : [])
+  } catch {
+    obErrors.value.analytics = 'Failed to load outbound analytics.'
+    outboundAnalytics.value = []
+  }
 }
 </script>
 
@@ -1149,6 +1542,15 @@ function openTranscript(call) {
 .chat-ai     { align-self: flex-start; background: rgba(45,95,196,0.08); border: 1px solid rgba(45,95,196,0.2); }
 .chat-caller { align-self: flex-end;   background: rgba(0,168,138,0.08); border: 1px solid rgba(0,168,138,0.2); }
 .chat-speaker { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 3px; color: var(--c-text-3); }
+
+/* ── Outbound section ───────────────────────────────────── */
+.ob-section-badge {
+  display: inline-flex; align-items: center;
+  background: var(--grad-accent); color: #fff;
+  font-size: 9px; font-weight: 900; letter-spacing: 2px;
+  padding: 3px 12px; border-radius: 99px; margin-bottom: 16px;
+}
+.chart-bar-fill--ob { background: var(--grad-accent); }
 
 /* ── Responsive ─────────────────────────────────────────── */
 @media (max-width: 1100px) { .stats-row, .shimmer-stat-row, .quick-stats { grid-template-columns: repeat(2, 1fr); } .plan-grid { grid-template-columns: repeat(2, 1fr); } }

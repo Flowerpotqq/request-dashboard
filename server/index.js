@@ -304,22 +304,44 @@ app.use((error, _req, res, _next) => {
 })
 
 // ── NAP Analytics Proxy ───────────────────────────────────────────────────────
-// Forwards /api/nap/* to n8n server-side, bypassing browser CORS restrictions.
+// All routes resolve the tenant from ?tenantId= and use tenant.inboundBase /
+// tenant.outboundBase to construct the correct n8n upstream URL. Adding a new
+// client only requires a new entry in data/tenant-links.json — no code changes.
 const N8N_WEBHOOK_BASE = 'https://n8n.getnapsolutions.com/webhook'
 
-const napProxyRoutes = [
-  { path: '/api/nap/overview',    upstream: `${N8N_WEBHOOK_BASE}/nap/overview` },
-  { path: '/api/nap/calls',       upstream: `${N8N_WEBHOOK_BASE}/nap/calls` },
-  { path: '/api/nap/transcripts', upstream: `${N8N_WEBHOOK_BASE}/nap/transcripts` },
-  { path: '/api/nap/invoices',    upstream: `${N8N_WEBHOOK_BASE}/nap/invoices` },
-]
+async function resolveTenantFromQuery(req) {
+  const tenantId = String(req.query.tenantId || '').trim()
+  if (!tenantId) return null
+  return findTenantByAccessToken(tenantId)
+}
 
-for (const { path, upstream } of napProxyRoutes) {
-  app.get(path, async (req, res) => {
+// ── Tenant capabilities (fast, server-only — tells frontend what features are on) ──
+app.get('/api/nap/tenant', async (req, res) => {
+  try {
+    const tenant = await resolveTenantFromQuery(req)
+    if (!tenant) return res.json({ hasOutbound: false, hasInbound: false })
+    res.json({
+      hasInbound:  !!tenant.inboundBase,
+      hasOutbound: !!tenant.outboundBase,
+    })
+  } catch (err) {
+    res.status(500).json({ error: 'Internal error', detail: err.message })
+  }
+})
+
+// ── Inbound analytics proxy ──────────────────────────────────────────────────
+// Routes: /api/nap/{overview|calls|transcripts|invoices}?tenantId=TOKEN
+// Proxies to: n8n/{tenant.inboundBase}/{endpoint}?tenantId=TOKEN
+for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
+  app.get(`/api/nap/${endpoint}`, async (req, res) => {
     try {
       const tenantId = String(req.query.tenantId || '').trim()
+      const tenant = tenantId ? await findTenantByAccessToken(tenantId) : null
+      const base = tenant?.inboundBase || 'nap'
       const qs = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ''
-      const response = await fetch(`${upstream}${qs}`, { headers: { Accept: 'application/json' } })
+      const response = await fetch(`${N8N_WEBHOOK_BASE}/${base}/${endpoint}${qs}`, {
+        headers: { Accept: 'application/json' },
+      })
       const text = await response.text()
       res.status(response.status).set('Content-Type', 'application/json').send(text)
     } catch (err) {
@@ -330,11 +352,53 @@ for (const { path, upstream } of napProxyRoutes) {
 
 app.get('/api/nap/analytics', async (req, res) => {
   try {
-    const range = req.query.range ?? '1'
     const tenantId = String(req.query.tenantId || '').trim()
+    const range = req.query.range ?? '1'
+    const tenant = tenantId ? await findTenantByAccessToken(tenantId) : null
+    const base = tenant?.inboundBase || 'nap'
     const tenantQs = tenantId ? `&tenantId=${encodeURIComponent(tenantId)}` : ''
     const response = await fetch(
-      `${N8N_WEBHOOK_BASE}/nap/analytics?range=${encodeURIComponent(range)}${tenantQs}`,
+      `${N8N_WEBHOOK_BASE}/${base}/analytics?range=${encodeURIComponent(range)}${tenantQs}`,
+      { headers: { Accept: 'application/json' } },
+    )
+    const text = await response.text()
+    res.status(response.status).set('Content-Type', 'application/json').send(text)
+  } catch (err) {
+    res.status(502).json({ error: 'Failed to reach n8n', detail: err.message })
+  }
+})
+
+// ── Outbound analytics proxy ─────────────────────────────────────────────────
+// Routes: /api/nap/outbound/{overview|calls|transcripts|invoices}?tenantId=TOKEN
+// Proxies to: n8n/{tenant.outboundBase}/{endpoint}
+// Returns 404 if tenant has no outbound_base configured.
+for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
+  app.get(`/api/nap/outbound/${endpoint}`, async (req, res) => {
+    try {
+      const tenant = await resolveTenantFromQuery(req)
+      if (!tenant?.outboundBase) {
+        return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
+      }
+      const response = await fetch(`${N8N_WEBHOOK_BASE}/${tenant.outboundBase}/${endpoint}`, {
+        headers: { Accept: 'application/json' },
+      })
+      const text = await response.text()
+      res.status(response.status).set('Content-Type', 'application/json').send(text)
+    } catch (err) {
+      res.status(502).json({ error: 'Failed to reach n8n', detail: err.message })
+    }
+  })
+}
+
+app.get('/api/nap/outbound/analytics', async (req, res) => {
+  try {
+    const tenant = await resolveTenantFromQuery(req)
+    if (!tenant?.outboundBase) {
+      return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
+    }
+    const range = req.query.range ?? '1'
+    const response = await fetch(
+      `${N8N_WEBHOOK_BASE}/${tenant.outboundBase}/analytics?range=${encodeURIComponent(range)}`,
       { headers: { Accept: 'application/json' } },
     )
     const text = await response.text()

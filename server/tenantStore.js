@@ -48,6 +48,8 @@ function normalizeTenant(entry) {
       tenant.receptionist_name || tenant.receptionistName || tenant.user_name,
     ),
     linkLabel: asString(tenant.link_label || tenant.linkLabel),
+    inboundBase: asString(tenant.inbound_base || tenant.inboundBase || 'nap'),
+    outboundBase: asString(tenant.outbound_base || tenant.outboundBase || ''),
   }
 }
 
@@ -76,5 +78,6 @@ export function toPublicTenant(tenant) {
     clinicName: normalized.clinicName,
     receptionistName: normalized.receptionistName,
     linkLabel: normalized.linkLabel,
+    hasOutbound: !!normalized.outboundBase,
   }
 }

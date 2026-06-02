@@ -40,10 +40,11 @@
           </div>
           <div class="a-sidebar__footer-row">
             <span class="a-sidebar__footer-period">{{ loading ? '—' : (overview.billingPeriod || 'Current Period') }}</span>
-            <span class="a-sidebar__footer-pct">{{ loading ? '—' : `${fmtNumber(billingPctDisplay)}%` }}</span>
+            <span class="a-sidebar__footer-pct">{{ loading ? '—' : `${fmtNumber(combinedPct)}%` }}</span>
           </div>
           <div class="a-sidebar__plan-bar">
-            <div class="a-sidebar__plan-fill" :style="{ width: loading ? '0%' : `${billingPctDisplay}%` }"></div>
+            <div class="a-sidebar__plan-fill--in" :style="{ width: loading ? '0%' : `${inboundSharePct}%` }"></div>
+            <div v-if="hasOutbound" class="a-sidebar__plan-fill--ob" :style="{ width: loading ? '0%' : `${outboundSharePct}%` }"></div>
           </div>
           <div class="a-sidebar__footer-powered">Powered by <strong>NAP Solutions</strong></div>
         </div>
@@ -86,6 +87,36 @@
 
           <!-- ── OVERVIEW ── -->
           <div v-if="activeSection === 'overview'" class="a-view">
+
+            <!-- Combined usage meter -->
+            <div class="glass-card a-card mb-4">
+              <div class="combined-meter-head">
+                <div>
+                  <div class="stat-title">Total AI Minutes Used</div>
+                  <div class="combined-period">{{ overview.billingPeriod || 'Current Period' }}{{ hasOutbound ? ' · Inbound + Outbound' : '' }}</div>
+                </div>
+                <div class="combined-total">
+                  <span class="text-grad-primary" style="font-size:26px;font-weight:900">{{ fmtNumber(combinedMinutes) }}</span>
+                  <span class="combined-cap-label"> / {{ fmtNumber(combinedCap) }} min</span>
+                </div>
+              </div>
+              <div class="combined-bar">
+                <div class="combined-bar__fill combined-bar__fill--in" :style="{ width: `${inboundSharePct}%` }"></div>
+                <div v-if="hasOutbound" class="combined-bar__fill combined-bar__fill--ob" :style="{ width: `${outboundSharePct}%` }"></div>
+              </div>
+              <div class="combined-legend">
+                <div class="legend-item">
+                  <div class="legend-dot legend-dot--in"></div>
+                  <span>Inbound — {{ fmtNumber(minutesUsedDisplay) }} / {{ fmtNumber(MINUTES_CAP) }} min</span>
+                </div>
+                <div v-if="hasOutbound" class="legend-item">
+                  <div class="legend-dot legend-dot--ob"></div>
+                  <span>Outbound — {{ fmtNumber(obMinutesUsed) }} / {{ fmtNumber(OB_MINUTES_CAP) }} min</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Inbound stat cards -->
             <div class="stats-row">
               <div
                 v-for="(card, i) in statCards"
@@ -93,9 +124,7 @@
                 class="stat-card glass-card"
                 :style="{ animationDelay: `${i * 70}ms` }"
               >
-                <div class="stat-icon-chip">
-                  <span v-html="card.icon"></span>
-                </div>
+                <div class="stat-icon-chip"><span v-html="card.icon"></span></div>
                 <div class="stat-title">{{ card.title }}</div>
                 <div v-if="errors.overview" class="stat-error">{{ errors.overview }}</div>
                 <template v-else>
@@ -111,7 +140,31 @@
               </div>
             </div>
 
-            <!-- Quick stats row -->
+            <!-- Outbound stat cards (only if hasOutbound) -->
+            <div v-if="hasOutbound" class="stats-row mt-4">
+              <div
+                v-for="(card, i) in obStatCards"
+                :key="card.title"
+                class="stat-card glass-card"
+                :style="{ animationDelay: `${i * 70}ms` }"
+              >
+                <div class="stat-icon-chip"><span v-html="card.icon"></span></div>
+                <div class="stat-title">{{ card.title }}</div>
+                <div v-if="obErrors.overview" class="stat-error">{{ obErrors.overview }}</div>
+                <template v-else>
+                  <div :class="['stat-num', `text-grad-${card.gradient}`]">{{ card.value }}</div>
+                  <template v-if="card.progress !== undefined">
+                    <div class="progress-wrap mt-2">
+                      <div class="progress-fill progress-fill--ob" :style="{ width: `${card.progress}%` }"></div>
+                    </div>
+                    <div class="stat-sub">{{ card.sub }}</div>
+                  </template>
+                  <div v-else-if="card.sub" class="stat-sub">{{ card.sub }}</div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Billing summary -->
             <div class="glass-card a-card mt-4" v-if="!errors.overview">
               <h3 class="a-card-title mb-3">Billing Summary</h3>
               <div class="quick-stats">
@@ -120,16 +173,16 @@
                   <div class="quick-stat__val">{{ overview.billingPeriod || '—' }}</div>
                 </div>
                 <div class="quick-stat">
-                  <div class="quick-stat__label">Minutes Included</div>
-                  <div class="quick-stat__val">{{ fmtNumber(MINUTES_CAP) }}</div>
-                </div>
-                <div class="quick-stat">
-                  <div class="quick-stat__label">Total Recordings</div>
+                  <div class="quick-stat__label">Inbound Recordings</div>
                   <div class="quick-stat__val">{{ overview.totalRecordings ?? '—' }}</div>
                 </div>
                 <div class="quick-stat">
-                  <div class="quick-stat__label">Total Transcripts</div>
+                  <div class="quick-stat__label">Inbound Transcripts</div>
                   <div class="quick-stat__val">{{ overview.totalTranscripts ?? '—' }}</div>
+                </div>
+                <div v-if="hasOutbound" class="quick-stat">
+                  <div class="quick-stat__label">Outbound Calls Today</div>
+                  <div class="quick-stat__val">{{ outboundOverview.callsToday ?? '—' }}</div>
                 </div>
               </div>
             </div>
@@ -318,60 +371,6 @@
             </div>
           </div>
 
-          <!-- ── OVERAGE ── -->
-          <div v-else-if="activeSection === 'overage'" class="a-view">
-            <div class="stats-row mb-4">
-              <div class="stat-card glass-card" style="animation-delay:0ms">
-                <div class="stat-icon-chip"><span v-html="ICONS.dollar"></span></div>
-                <div class="stat-title">Overage Cost</div>
-                <div v-if="errors.overview" class="stat-error">{{ errors.overview }}</div>
-                <div v-else :class="['stat-num', overview.overageUSD > 0 ? 'text-grad-danger' : 'text-grad-accent']">
-                  {{ money(overview.overageUSD || 0) }}
-                </div>
-                <div class="stat-sub">{{ overview.overageUSD > 0 ? 'Overage charges apply' : 'No overage this period' }}</div>
-              </div>
-              <div class="stat-card glass-card" style="animation-delay:70ms">
-                <div class="stat-icon-chip"><span v-html="ICONS.clock"></span></div>
-                <div class="stat-title">Minutes Used</div>
-                <div v-if="errors.overview" class="stat-error">{{ errors.overview }}</div>
-                <div v-else class="stat-num text-grad-primary">{{ fmtNumber(minutesUsedDisplay) }}</div>
-                <div class="stat-sub">of {{ fmtNumber(MINUTES_CAP) }} included</div>
-              </div>
-            </div>
-            <div class="glass-card a-card">
-              <div class="a-card-head">
-                <div>
-                  <h3 class="a-card-title">Overage Invoices</h3>
-                  <p class="a-card-sub">Invoices with usage charges beyond your plan</p>
-                </div>
-              </div>
-              <div v-if="errors.invoices" class="section-error">{{ errors.invoices }}</div>
-              <div v-else class="table-wrap">
-                <table class="nap-table">
-                  <thead>
-                    <tr><th>Period</th><th>Amount</th><th>Overage Min</th><th>Status</th><th>Date</th></tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="inv in overageInvoices" :key="inv.id">
-                      <td>{{ inv.period }}</td>
-                      <td class="font-bold">{{ inv.amount }}</td>
-                      <td>{{ inv.overageMin ?? 0 }} min</td>
-                      <td>
-                        <span :class="['badge', inv.paid ? 'badge-completed' : 'badge-pending']">
-                          <span class="badge-dot"></span>{{ inv.paid ? 'Paid' : 'Pending' }}
-                        </span>
-                      </td>
-                      <td>{{ fmtDate(inv.date) }}</td>
-                    </tr>
-                    <tr v-if="overageInvoices.length === 0">
-                      <td colspan="5" class="empty-cell">No overage invoices found.</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
           <!-- ── MY PLAN ── -->
           <div v-else-if="activeSection === 'my-plan'" class="a-view">
             <div class="glass-card a-card" v-if="errors.overview">
@@ -419,54 +418,6 @@
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                   Visit Website
                 </a>
-              </div>
-            </div>
-          </div>
-
-          <!-- ── OUTBOUND OVERVIEW ── -->
-          <div v-else-if="activeSection === 'ob-overview'" class="a-view">
-            <div class="ob-section-badge">OUTBOUND</div>
-            <div class="stats-row">
-              <div
-                v-for="(card, i) in obStatCards"
-                :key="card.title"
-                class="stat-card glass-card"
-                :style="{ animationDelay: `${i * 70}ms` }"
-              >
-                <div class="stat-icon-chip"><span v-html="card.icon"></span></div>
-                <div class="stat-title">{{ card.title }}</div>
-                <div v-if="obErrors.overview" class="stat-error">{{ obErrors.overview }}</div>
-                <template v-else>
-                  <div :class="['stat-num', `text-grad-${card.gradient}`]">{{ card.value }}</div>
-                  <template v-if="card.progress !== undefined">
-                    <div class="progress-wrap mt-2">
-                      <div class="progress-fill" :style="{ width: `${card.progress}%` }"></div>
-                    </div>
-                    <div class="stat-sub">{{ card.sub }}</div>
-                  </template>
-                  <div v-else-if="card.sub" class="stat-sub">{{ card.sub }}</div>
-                </template>
-              </div>
-            </div>
-            <div class="glass-card a-card mt-4" v-if="!obErrors.overview">
-              <h3 class="a-card-title mb-3">Outbound Billing Summary</h3>
-              <div class="quick-stats">
-                <div class="quick-stat">
-                  <div class="quick-stat__label">Billing Period</div>
-                  <div class="quick-stat__val">{{ outboundOverview.billingPeriod || '—' }}</div>
-                </div>
-                <div class="quick-stat">
-                  <div class="quick-stat__label">Minutes Included</div>
-                  <div class="quick-stat__val">{{ fmtNumber(OB_MINUTES_CAP) }}</div>
-                </div>
-                <div class="quick-stat">
-                  <div class="quick-stat__label">Calls Today</div>
-                  <div class="quick-stat__val">{{ outboundOverview.callsToday ?? '—' }}</div>
-                </div>
-                <div class="quick-stat">
-                  <div class="quick-stat__label">Completed Today</div>
-                  <div class="quick-stat__val">{{ outboundOverview.completedToday ?? '—' }}</div>
-                </div>
               </div>
             </div>
           </div>
@@ -768,30 +719,23 @@ const ICONS = {
 
 const navSections = computed(() => [
   {
-    label: 'DASHBOARD',
+    label: 'OVERVIEW',
     items: [
-      { id: 'overview',     label: 'Overview',     icon: ICONS.grid },
-      { id: 'call-volume',  label: 'Analytics',    icon: ICONS.activity },
+      { id: 'overview', label: 'Overview', icon: ICONS.grid },
     ],
   },
   {
-    label: 'CALLS',
+    label: 'INBOUND',
     items: [
-      { id: 'call-logs',    label: 'Call Logs',        icon: ICONS.phone },
+      { id: 'call-volume',  label: 'Analytics',        icon: ICONS.activity },
+      { id: 'call-logs',    label: 'Call Logs',         icon: ICONS.phone },
       { id: 'transcripts',  label: 'Transcribed Calls', icon: ICONS.message },
-    ],
-  },
-  {
-    label: 'BILLING',
-    items: [
       { id: 'invoices',     label: 'Invoices',          icon: ICONS.file },
-      { id: 'overage',      label: 'Overage Invoices',  icon: ICONS.trending },
     ],
   },
   ...(hasOutbound.value ? [{
     label: 'OUTBOUND',
     items: [
-      { id: 'ob-overview',     label: 'Overview',    icon: ICONS.grid },
       { id: 'ob-analytics',   label: 'Analytics',   icon: ICONS.activity },
       { id: 'ob-calls',       label: 'Call Logs',   icon: ICONS.phone },
       { id: 'ob-transcripts', label: 'Transcripts', icon: ICONS.message },
@@ -801,26 +745,24 @@ const navSections = computed(() => [
   {
     label: 'ACCOUNT',
     items: [
-      { id: 'my-plan',      label: 'My Plan',           icon: ICONS.star },
-      { id: 'contact',      label: 'Contact & Upgrade', icon: ICONS.mail },
+      { id: 'my-plan', label: 'My Plan',           icon: ICONS.star },
+      { id: 'contact', label: 'Contact & Upgrade', icon: ICONS.mail },
     ],
   },
 ])
 
 const sectionMeta = {
-  'overview':    { title: 'Overview',          sub: 'Your AI receptionist at a glance.' },
-  'call-volume': { title: 'Analytics',         sub: 'Call volume and trends over time.' },
-  'call-logs':   { title: 'Call Logs',         sub: 'All recent calls from your AI receptionist.' },
-  'transcripts': { title: 'Transcribed Calls', sub: 'Full conversation recordings and summaries.' },
-  'invoices':    { title: 'Invoices',          sub: 'Billing history and payment status.' },
-  'overage':     { title: 'Overage Invoices',  sub: 'Usage and charges beyond your plan.' },
-  'my-plan':     { title: 'My Plan',           sub: 'Your current plan details and usage.' },
-  'contact':        { title: 'Contact & Upgrade',      sub: 'Get help or upgrade your NAP Solutions plan.' },
-  'ob-overview':    { title: 'Outbound Overview',       sub: 'Outbound calling activity at a glance.' },
-  'ob-analytics':   { title: 'Outbound Analytics',      sub: 'Outbound call volume and trends over time.' },
-  'ob-calls':       { title: 'Outbound Call Logs',      sub: 'All outbound calls from your campaign.' },
-  'ob-transcripts': { title: 'Outbound Transcripts',    sub: 'Full outbound conversation recordings and summaries.' },
-  'ob-invoices':    { title: 'Outbound Invoices',       sub: 'Outbound billing history and payment status.' },
+  'overview':       { title: 'Overview',             sub: 'Combined inbound & outbound usage at a glance.' },
+  'call-volume':    { title: 'Inbound Analytics',    sub: 'Inbound call volume and trends over time.' },
+  'call-logs':      { title: 'Inbound Call Logs',    sub: 'All recent calls from your AI receptionist.' },
+  'transcripts':    { title: 'Transcribed Calls',    sub: 'Full conversation recordings and summaries.' },
+  'invoices':       { title: 'Inbound Invoices',     sub: 'Billing history and payment status.' },
+  'my-plan':        { title: 'My Plan',              sub: 'Your current plan details and usage.' },
+  'contact':        { title: 'Contact & Upgrade',    sub: 'Get help or upgrade your NAP Solutions plan.' },
+  'ob-analytics':   { title: 'Outbound Analytics',  sub: 'Outbound call volume and trends over time.' },
+  'ob-calls':       { title: 'Outbound Call Logs',   sub: 'All outbound calls from your campaign.' },
+  'ob-transcripts': { title: 'Outbound Transcripts', sub: 'Full outbound conversation recordings and summaries.' },
+  'ob-invoices':    { title: 'Outbound Invoices',    sub: 'Outbound billing history and payment status.' },
 }
 
 const currentSectionTitle = computed(() => sectionMeta[activeSection.value]?.title ?? 'Analytics')
@@ -851,6 +793,13 @@ const billingPctDisplay  = computed(() => {
   if (!MINUTES_CAP) return 0
   return Math.min(100, (used / MINUTES_CAP) * 100)
 })
+
+// Combined inbound + outbound meter
+const combinedMinutes    = computed(() => minutesUsedDisplay.value + (hasOutbound.value ? obMinutesUsed.value : 0))
+const combinedCap        = computed(() => MINUTES_CAP + (hasOutbound.value ? OB_MINUTES_CAP : 0))
+const combinedPct        = computed(() => combinedCap.value ? Math.min(100, (combinedMinutes.value / combinedCap.value) * 100) : 0)
+const inboundSharePct    = computed(() => combinedCap.value ? Math.min(100, (minutesUsedDisplay.value / combinedCap.value) * 100) : 0)
+const outboundSharePct   = computed(() => combinedCap.value ? Math.min(100, (obMinutesUsed.value / combinedCap.value) * 100) : 0)
 
 const statCards = computed(() => [
   {
@@ -1542,6 +1491,40 @@ async function reloadObAnalytics() {
 .chat-ai     { align-self: flex-start; background: rgba(45,95,196,0.08); border: 1px solid rgba(45,95,196,0.2); }
 .chat-caller { align-self: flex-end;   background: rgba(0,168,138,0.08); border: 1px solid rgba(0,168,138,0.2); }
 .chat-speaker { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 3px; color: var(--c-text-3); }
+
+/* ── Combined meter ─────────────────────────────────────── */
+.combined-meter-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px;
+}
+.combined-period { font-size: 12px; color: var(--c-text-3); margin-top: 3px; }
+.combined-total { text-align: right; }
+.combined-cap-label { font-size: 14px; font-weight: 600; color: var(--c-text-3); }
+.combined-bar {
+  display: flex; height: 10px; border-radius: 999px;
+  background: rgba(91,63,143,0.08); overflow: hidden; margin-bottom: 12px;
+}
+.combined-bar__fill {
+  height: 100%; transition: width 900ms cubic-bezier(.22,1,.36,1); min-width: 0;
+}
+.combined-bar__fill--in  { background: var(--grad-primary); }
+.combined-bar__fill--ob  { background: var(--grad-accent); }
+.combined-legend { display: flex; gap: 20px; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--c-text-2); }
+.legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot--in { background: var(--grad-primary); }
+.legend-dot--ob { background: var(--grad-accent); }
+.progress-fill--ob { background: var(--grad-accent); }
+
+/* ── Sidebar plan bar (split) ───────────────────────────── */
+.a-sidebar__plan-bar { display: flex; }
+.a-sidebar__plan-fill--in {
+  height: 100%; background: var(--grad-primary); border-radius: 999px 0 0 999px;
+  transition: width 900ms cubic-bezier(.22,1,.36,1);
+}
+.a-sidebar__plan-fill--ob {
+  height: 100%; background: var(--grad-accent); border-radius: 0 999px 999px 0;
+  transition: width 900ms cubic-bezier(.22,1,.36,1);
+}
 
 /* ── Outbound section ───────────────────────────────────── */
 .ob-section-badge {

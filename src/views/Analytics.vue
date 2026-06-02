@@ -107,11 +107,11 @@
               <div class="combined-legend">
                 <div class="legend-item">
                   <div class="legend-dot legend-dot--in"></div>
-                  <span>Inbound — {{ fmtNumber(minutesUsedDisplay) }} / {{ fmtNumber(MINUTES_CAP) }} min</span>
+                  <span>Inbound — {{ fmtNumber(minutesUsedDisplay) }} / {{ fmtNumber(minutesCapDisplay) }} min</span>
                 </div>
                 <div v-if="hasOutbound" class="legend-item">
                   <div class="legend-dot legend-dot--ob"></div>
-                  <span>Outbound — {{ fmtNumber(obMinutesUsed) }} / {{ fmtNumber(OB_MINUTES_CAP) }} min</span>
+                  <span>Outbound — {{ fmtNumber(obMinutesUsed) }} / {{ fmtNumber(obMinutesCap) }} min</span>
                 </div>
               </div>
             </div>
@@ -378,11 +378,11 @@
             </div>
             <template v-else>
               <div class="plan-hero glass-card">
-                <div class="plan-hero__badge">SCALE PLAN</div>
+                <div class="plan-hero__badge">{{ overview.clientName || 'MY PLAN' }}</div>
                 <div class="plan-hero__period">{{ overview.billingPeriod || 'Current Period' }}</div>
                 <div class="plan-hero__usage">
                   <span class="text-grad-primary" style="font-size:32px;font-weight:900">{{ fmtNumber(minutesUsedDisplay) }}</span>
-                  <span class="plan-hero__cap"> / {{ fmtNumber(MINUTES_CAP) }} min</span>
+                  <span class="plan-hero__cap"> / {{ fmtNumber(minutesCapDisplay) }} min</span>
                 </div>
                 <div class="progress-wrap mt-2" style="height:8px">
                   <div class="progress-fill" :style="{ width: `${billingPctDisplay}%` }"></div>
@@ -651,7 +651,6 @@
 import { computed, onMounted, ref, watch } from 'vue'
 
 const API_BASE = '/api/nap'
-const MINUTES_CAP = 1000
 
 // Extract tenant token from /t/:token or /clinic/:token — null on the bare base URL
 const _pathMatch = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
@@ -690,7 +689,6 @@ const obInvoiceFilter = ref('all')
 const obErrors = ref({ overview: '', analytics: '', calls: '', transcripts: '', invoices: '' })
 const obCallSearch = ref('')
 const obTxSearch = ref('')
-const OB_MINUTES_CAP = 1000
 
 const rangeOptions = [
   { label: 'Hourly',   value: 0 },
@@ -787,16 +785,17 @@ const overageInvoices = computed(() =>
 )
 
 const minutesUsedDisplay = computed(() => Number(overview.value?.minutesUsed || 0))
-const minutesCapDisplay  = computed(() => MINUTES_CAP)
+const minutesCapDisplay  = computed(() => Number(overview.value?.minutesIncluded || 1000))
 const billingPctDisplay  = computed(() => {
-  const used = minutesUsedDisplay.value
-  if (!MINUTES_CAP) return 0
-  return Math.min(100, (used / MINUTES_CAP) * 100)
+  const cap = minutesCapDisplay.value
+  if (!cap) return 0
+  return Math.min(100, (minutesUsedDisplay.value / cap) * 100)
 })
 
 // Combined inbound + outbound meter
+const obMinutesCap       = computed(() => Number(outboundOverview.value?.minutesIncluded || 1000))
 const combinedMinutes    = computed(() => minutesUsedDisplay.value + (hasOutbound.value ? obMinutesUsed.value : 0))
-const combinedCap        = computed(() => MINUTES_CAP + (hasOutbound.value ? OB_MINUTES_CAP : 0))
+const combinedCap        = computed(() => minutesCapDisplay.value + (hasOutbound.value ? obMinutesCap.value : 0))
 const combinedPct        = computed(() => combinedCap.value ? Math.min(100, (combinedMinutes.value / combinedCap.value) * 100) : 0)
 const inboundSharePct    = computed(() => combinedCap.value ? Math.min(100, (minutesUsedDisplay.value / combinedCap.value) * 100) : 0)
 const outboundSharePct   = computed(() => combinedCap.value ? Math.min(100, (obMinutesUsed.value / combinedCap.value) * 100) : 0)
@@ -833,8 +832,11 @@ const statCards = computed(() => [
 
 const planStats = computed(() => [
   { label: 'Billing Period',    value: overview.value.billingPeriod || '—' },
-  { label: 'Minutes Included',  value: fmtNumber(MINUTES_CAP) },
+  { label: 'Minutes Included',  value: fmtNumber(minutesCapDisplay.value) },
   { label: 'Minutes Used',      value: fmtNumber(minutesUsedDisplay.value) },
+  { label: 'Base Rate',         value: overview.value.basePrice != null ? money(overview.value.basePrice) : '—' },
+  { label: 'Per-Min Rate',      value: overview.value.clientRatePerMin != null ? `$${Number(overview.value.clientRatePerMin).toFixed(2)}/min` : '—' },
+  { label: 'Overage Rate',      value: overview.value.overageRate != null ? `$${Number(overview.value.overageRate).toFixed(2)}/min` : '—' },
   { label: 'Total Calls',       value: overview.value.totalCalls ?? '—' },
   { label: 'Total Recordings',  value: overview.value.totalRecordings ?? '—' },
   { label: 'Total Transcripts', value: overview.value.totalTranscripts ?? '—' },
@@ -842,12 +844,12 @@ const planStats = computed(() => [
 
 // Outbound computed properties
 const obMinutesUsed = computed(() => Number(outboundOverview.value?.minutesUsed || 0))
-const obBillingPct  = computed(() => Math.min(100, (obMinutesUsed.value / OB_MINUTES_CAP) * 100))
+const obBillingPct  = computed(() => obMinutesCap.value ? Math.min(100, (obMinutesUsed.value / obMinutesCap.value) * 100) : 0)
 
 const obStatCards = computed(() => [
   {
     title: 'Minutes Used',
-    value: `${fmtNumber(obMinutesUsed.value)} / ${fmtNumber(OB_MINUTES_CAP)}`,
+    value: `${fmtNumber(obMinutesUsed.value)} / ${fmtNumber(obMinutesCap.value)}`,
     sub: `${fmtNumber(obBillingPct.value)}% of plan`,
     progress: obBillingPct.value,
     gradient: 'primary',
@@ -966,7 +968,7 @@ function normalizeInvoiceMinutes(rawMinutes) {
   const usedPart = raw.split('/')[0]?.trim() || '0'
   const usedNum = Number(usedPart.replace(/[^\d.]/g, ''))
   const used = Number.isFinite(usedNum) ? usedNum : 0
-  return `${fmtNumber(used)} / ${fmtNumber(MINUTES_CAP)}`
+  return `${fmtNumber(used)} / ${fmtNumber(minutesCapDisplay.value)}`
 }
 
 function normalizeInvoices(list) {

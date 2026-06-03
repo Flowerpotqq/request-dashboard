@@ -963,20 +963,14 @@ function currentBillingPeriodFallback() {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 }
 
-function normalizeInvoiceMinutes(rawMinutes) {
-  const raw = String(rawMinutes ?? '').trim()
-  const usedPart = raw.split('/')[0]?.trim() || '0'
-  const usedNum = Number(usedPart.replace(/[^\d.]/g, ''))
-  const used = Number.isFinite(usedNum) ? usedNum : 0
-  return `${fmtNumber(used)} / ${fmtNumber(minutesCapDisplay.value)}`
-}
-
 function normalizeInvoices(list) {
   return (Array.isArray(list) ? list : []).map((inv, index) => {
     const period = String(inv?.period || '').trim() || overview.value?.billingPeriod || currentBillingPeriodFallback()
     const amountRaw = String(inv?.amount || '').trim()
     const amount = amountRaw || '$0.00'
-    const minutes = normalizeInvoiceMinutes(inv?.minutes)
+    const used = Number(inv?.minutesUsed ?? 0)
+    const cap  = Number(inv?.includedMinutes ?? minutesCapDisplay.value)
+    const minutes = `${fmtNumber(used)} / ${fmtNumber(cap)}`
     const date = String(inv?.date || '').trim()
     return {
       id: inv?.id || `invoice-${index}`,

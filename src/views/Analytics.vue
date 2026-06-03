@@ -379,15 +379,16 @@
             <template v-else>
               <div class="plan-hero glass-card">
                 <div class="plan-hero__badge">{{ overview.clientName || 'MY PLAN' }}</div>
-                <div class="plan-hero__period">{{ overview.billingPeriod || 'Current Period' }}</div>
+                <div class="plan-hero__period">{{ overview.billingPeriod || 'Current Period' }}{{ hasOutbound ? ' · Inbound + Outbound' : '' }}</div>
                 <div class="plan-hero__usage">
-                  <span class="text-grad-primary" style="font-size:32px;font-weight:900">{{ fmtNumber(minutesUsedDisplay) }}</span>
-                  <span class="plan-hero__cap"> / {{ fmtNumber(minutesCapDisplay) }} min</span>
+                  <span class="text-grad-primary" style="font-size:32px;font-weight:900">{{ fmtNumber(combinedMinutes) }}</span>
+                  <span class="plan-hero__cap"> / {{ fmtNumber(combinedCap) }} min</span>
                 </div>
-                <div class="progress-wrap mt-2" style="height:8px">
-                  <div class="progress-fill" :style="{ width: `${billingPctDisplay}%` }"></div>
+                <div class="combined-bar mt-2" style="height:8px">
+                  <div class="combined-bar__fill combined-bar__fill--in" :style="{ width: `${inboundSharePct}%` }"></div>
+                  <div v-if="hasOutbound" class="combined-bar__fill combined-bar__fill--ob" :style="{ width: `${outboundSharePct}%` }"></div>
                 </div>
-                <div class="plan-hero__pct">{{ fmtNumber(billingPctDisplay) }}% of plan used</div>
+                <div class="plan-hero__pct">{{ fmtNumber(combinedPct) }}% of plan used</div>
               </div>
 
               <div class="plan-grid mt-4">
@@ -831,15 +832,12 @@ const statCards = computed(() => [
 ])
 
 const planStats = computed(() => [
-  { label: 'Billing Period',    value: overview.value.billingPeriod || '—' },
-  { label: 'Minutes Included',  value: fmtNumber(minutesCapDisplay.value) },
-  { label: 'Minutes Used',      value: fmtNumber(minutesUsedDisplay.value) },
-  { label: 'Base Rate',         value: overview.value.basePrice != null ? money(overview.value.basePrice) : '—' },
-  { label: 'Per-Min Rate',      value: overview.value.clientRatePerMin != null ? `$${Number(overview.value.clientRatePerMin).toFixed(2)}/min` : '—' },
-  { label: 'Overage Rate',      value: overview.value.overageRate != null ? `$${Number(overview.value.overageRate).toFixed(2)}/min` : '—' },
-  { label: 'Total Calls',       value: overview.value.totalCalls ?? '—' },
-  { label: 'Total Recordings',  value: overview.value.totalRecordings ?? '—' },
-  { label: 'Total Transcripts', value: overview.value.totalTranscripts ?? '—' },
+  { label: 'Billing Period',       value: overview.value.billingPeriod || '—' },
+  { label: 'Inbound Minutes',      value: `${fmtNumber(minutesUsedDisplay.value)} / ${fmtNumber(minutesCapDisplay.value)}` },
+  ...(hasOutbound.value ? [
+    { label: 'Outbound Minutes',   value: `${fmtNumber(obMinutesUsed.value)} / ${fmtNumber(obMinutesCap.value)}` },
+  ] : []),
+  { label: 'Total Minutes Used',   value: fmtNumber(combinedMinutes.value) },
 ])
 
 // Outbound computed properties

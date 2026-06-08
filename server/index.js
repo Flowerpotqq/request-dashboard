@@ -319,7 +319,7 @@ async function resolveTenantFromQuery(req) {
 app.get('/api/nap/tenant', async (req, res) => {
   try {
     const tenant = await resolveTenantFromQuery(req)
-    if (!tenant) return res.json({ hasOutbound: false, hasInbound: false })
+    if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
     res.json({
       hasInbound:  !!tenant.inboundBase,
       hasOutbound: !!tenant.outboundBase,
@@ -332,14 +332,15 @@ app.get('/api/nap/tenant', async (req, res) => {
 // ── Inbound analytics proxy ──────────────────────────────────────────────────
 // Routes: /api/nap/{overview|calls|transcripts|invoices}?tenantId=TOKEN
 // Proxies to: n8n/{tenant.inboundBase}/{endpoint}?tenantId=TOKEN
+// Returns 401 if the token is not in tenant-links.json — never falls back to another tenant.
 for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
   app.get(`/api/nap/${endpoint}`, async (req, res) => {
     try {
       const tenantId = String(req.query.tenantId || '').trim()
       const tenant = tenantId ? await findTenantByAccessToken(tenantId) : null
-      const base = tenant?.inboundBase || 'nap'
-      const qs = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ''
-      const response = await fetch(`${N8N_WEBHOOK_BASE}/${base}/${endpoint}${qs}`, {
+      if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
+      const qs = `?tenantId=${encodeURIComponent(tenantId)}`
+      const response = await fetch(`${N8N_WEBHOOK_BASE}/${tenant.inboundBase}/${endpoint}${qs}`, {
         headers: { Accept: 'application/json' },
       })
       const text = await response.text()
@@ -353,12 +354,11 @@ for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
 app.get('/api/nap/analytics', async (req, res) => {
   try {
     const tenantId = String(req.query.tenantId || '').trim()
-    const range = req.query.range ?? '1'
     const tenant = tenantId ? await findTenantByAccessToken(tenantId) : null
-    const base = tenant?.inboundBase || 'nap'
-    const tenantQs = tenantId ? `&tenantId=${encodeURIComponent(tenantId)}` : ''
+    if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
+    const range = req.query.range ?? '1'
     const response = await fetch(
-      `${N8N_WEBHOOK_BASE}/${base}/analytics?range=${encodeURIComponent(range)}${tenantQs}`,
+      `${N8N_WEBHOOK_BASE}/${tenant.inboundBase}/analytics?range=${encodeURIComponent(range)}&tenantId=${encodeURIComponent(tenantId)}`,
       { headers: { Accept: 'application/json' } },
     )
     const text = await response.text()
@@ -371,14 +371,13 @@ app.get('/api/nap/analytics', async (req, res) => {
 // ── Outbound analytics proxy ─────────────────────────────────────────────────
 // Routes: /api/nap/outbound/{overview|calls|transcripts|invoices}?tenantId=TOKEN
 // Proxies to: n8n/{tenant.outboundBase}/{endpoint}
-// Returns 404 if tenant has no outbound_base configured.
+// Returns 401 for invalid token, 404 if tenant has no outbound_base configured.
 for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
   app.get(`/api/nap/outbound/${endpoint}`, async (req, res) => {
     try {
       const tenant = await resolveTenantFromQuery(req)
-      if (!tenant?.outboundBase) {
-        return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
-      }
+      if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
+      if (!tenant.outboundBase) return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
       const response = await fetch(`${N8N_WEBHOOK_BASE}/${tenant.outboundBase}/${endpoint}`, {
         headers: { Accept: 'application/json' },
       })
@@ -393,7 +392,8 @@ for (const endpoint of ['overview', 'calls', 'transcripts', 'invoices']) {
 app.get('/api/nap/outbound/analytics', async (req, res) => {
   try {
     const tenant = await resolveTenantFromQuery(req)
-    if (!tenant?.outboundBase) {
+    if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
+    if (!tenant.outboundBase) {
       return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
     }
     const range = req.query.range ?? '1'
@@ -401,6 +401,26 @@ app.get('/api/nap/outbound/analytics', async (req, res) => {
       `${N8N_WEBHOOK_BASE}/${tenant.outboundBase}/analytics?range=${encodeURIComponent(range)}`,
       { headers: { Accept: 'application/json' } },
     )
+    const text = await response.text()
+    res.status(response.status).set('Content-Type', 'application/json').send(text)
+  } catch (err) {
+    res.status(502).json({ error: 'Failed to reach n8n', detail: err.message })
+  }
+})
+
+// ── Make a Call: batch outbound via Retell AI ────────────────────────────────
+// POST /api/nap/outbound/retell-batch?tenantId=TOKEN
+// Forwards { contacts: [...] } to n8n: {outboundBase}/retell-batch-v2
+app.post('/api/nap/outbound/retell-batch', async (req, res) => {
+  try {
+    const tenant = await resolveTenantFromQuery(req)
+    if (!tenant) return res.status(401).json({ error: 'Invalid or missing access token.' })
+    if (!tenant.outboundBase) return res.status(404).json({ error: 'Outbound not configured for this tenant.' })
+    const response = await fetch(`${N8N_WEBHOOK_BASE}/${tenant.outboundBase}/retell-batch-v2`, {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(req.body),
+    })
     const text = await response.text()
     res.status(response.status).set('Content-Type', 'application/json').send(text)
   } catch (err) {

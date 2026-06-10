@@ -494,14 +494,14 @@
                 </div>
               </div>
               <div v-if="!obErrors.calls" class="search-filter-bar">
-                <input v-model="obCallSearch" type="text" placeholder="Search by date or phone…" class="nap-input search-input" />
+                <input v-model="obCallSearch" type="text" placeholder="Search by date, phone, or name…" class="nap-input search-input" />
               </div>
               <div v-if="obErrors.calls" class="section-error">{{ obErrors.calls }}</div>
               <div v-else class="table-wrap">
                 <table class="nap-table">
                   <thead>
                     <tr>
-                      <th>Date &amp; Time</th><th>To</th><th>Duration</th>
+                      <th>Date &amp; Time</th><th>To</th><th>Name</th><th>Duration</th>
                       <th>Status</th><th>Sentiment</th><th>Rec.</th><th>Transcript</th>
                     </tr>
                   </thead>
@@ -509,6 +509,7 @@
                     <tr v-for="call in filteredObCalls" :key="call.id" @click="openObTranscript(call)" class="call-row">
                       <td>{{ fmtDateTime(call.timestamp || call.date) }}</td>
                       <td class="font-mono">{{ fmtPhone(call.to || call.from) }}</td>
+                      <td style="font-weight:600">{{ obCallName(call) || '—' }}</td>
                       <td>{{ fmtDurationMin(call.duration_min || 0) }}</td>
                       <td><span :class="['badge', statusBadge(call.status)]">{{ displayStatus(call.status) }}</span></td>
                       <td><span :class="['badge', sentimentBadge(call.sentiment)]">{{ call.sentiment || 'Neutral' }}</span></td>
@@ -516,7 +517,7 @@
                       <td><span :class="call.hasTranscript ? 'check-yes' : 'check-no'">{{ call.hasTranscript ? '✓' : '–' }}</span></td>
                     </tr>
                     <tr v-if="filteredObCalls.length === 0">
-                      <td colspan="7" class="empty-cell">{{ obCallSearch ? 'No calls match your search.' : 'No outbound calls found.' }}</td>
+                      <td colspan="8" class="empty-cell">{{ obCallSearch ? 'No calls match your search.' : 'No outbound calls found.' }}</td>
                     </tr>
                   </tbody>
                 </table>
@@ -548,7 +549,10 @@
                   <div class="tx-card__head">
                     <div>
                       <div class="tx-card__date">{{ fmtDateTime(tx.timestamp || tx.date) }}</div>
-                      <div class="tx-card__meta">{{ fmtDurationMin(tx.duration_min || 0) }}</div>
+                      <div class="tx-card__meta">
+                        {{ fmtDurationMin(tx.duration_min || 0) }}
+                        <span v-if="obCallName(tx)" style="margin-left:8px;font-weight:700;color:var(--c-text-2)">· {{ obCallName(tx) }}</span>
+                      </div>
                     </div>
                     <div class="tx-card__right">
                       <span :class="['badge', sentimentBadge(tx.sentiment)]">{{ tx.sentiment || 'Neutral' }}</span>
@@ -1044,7 +1048,8 @@ const filteredObCalls = computed(() => {
     ? obCalls.value.filter(call => {
         const date  = fmtDateTime(call.timestamp || call.date).toLowerCase()
         const phone = fmtPhone(call.to || call.from).toLowerCase()
-        return date.includes(q) || phone.includes(q)
+        const name  = obCallName(call).toLowerCase()
+        return date.includes(q) || phone.includes(q) || name.includes(q)
       })
     : obCalls.value
 })
@@ -1053,9 +1058,10 @@ const filteredObTranscripts = computed(() => {
   const q = obTxSearch.value.trim().toLowerCase()
   return q
     ? obTranscripts.value.filter(tx => {
-        const date = fmtDateTime(tx.timestamp || tx.date).toLowerCase()
+        const date    = fmtDateTime(tx.timestamp || tx.date).toLowerCase()
         const summary = String(tx.summary || '').toLowerCase()
-        return date.includes(q) || summary.includes(q)
+        const name    = obCallName(tx).toLowerCase()
+        return date.includes(q) || summary.includes(q) || name.includes(q)
       })
     : obTranscripts.value
 })
@@ -1346,6 +1352,13 @@ function openObTranscript(call) {
   const tx = obTranscriptByCallId.value.get(call.id)
   if (!tx) return
   activeTranscript.value = tx
+}
+
+function obCallName(item) {
+  const full = item?.contactName || item?.contact_name || item?.callerName ||
+    item?.name || item?.caller_name ||
+    [item?.contact_first_name || item?.first_name, item?.contact_last_name || item?.last_name].filter(Boolean).join(' ')
+  return String(full || '').trim()
 }
 
 function filterObHourly(data) {

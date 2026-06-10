@@ -768,9 +768,15 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 const API_BASE = '/api/nap'
+
+// ── Polling config ───────────────────────────────────────────────────────────
+const INBOUND_REFRESH_MS = 60_000   // inbound data silently refreshes every 60 s
+const BATCH_PAUSE_MS     = 2 * 60_000  // pause inbound polling for 2 min after a batch submit
+let _inboundTimer = null
+let _batchResumeTimer = null
 
 // Extract tenant token from /t/:token or /clinic/:token — null on the bare base URL
 const _pathMatch = window.location.pathname.match(/^\/(?:t|clinic)\/([^/]+)/)
@@ -1163,11 +1169,40 @@ async function fetchJson(url) {
   return response.json()
 }
 
+function startInboundPolling() {
+  if (_inboundTimer) return
+  _inboundTimer = setInterval(refreshInboundSilent, INBOUND_REFRESH_MS)
+}
+
+function stopInboundPolling() {
+  if (_inboundTimer) { clearInterval(_inboundTimer); _inboundTimer = null }
+}
+
+// Quietly refreshes inbound-only data (no loading spinner, no outbound touch)
+async function refreshInboundSilent() {
+  if (!tenantId) return
+  const tid = encodeURIComponent(tenantId)
+  const [ovRes, callsRes, txRes, invRes] = await Promise.allSettled([
+    fetchJson(`${API_BASE}/overview?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/calls?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/transcripts?tenantId=${tid}`),
+    fetchJson(`${API_BASE}/invoices?tenantId=${tid}`),
+  ])
+  if (ovRes.status    === 'fulfilled') overview.value    = ovRes.value    || {}
+  if (callsRes.status === 'fulfilled') calls.value       = Array.isArray(callsRes.value?.calls)        ? callsRes.value.calls        : []
+  if (txRes.status    === 'fulfilled') transcripts.value = Array.isArray(txRes.value?.transcripts)     ? txRes.value.transcripts     : []
+  if (invRes.status   === 'fulfilled') invoices.value    = normalizeInvoices(invRes.value?.invoices)
+}
+
 async function loadAll() {
   if (!tenantId) {
     loading.value = false
     return
   }
+  // Reset any existing timers so the 60s clock restarts from now
+  stopInboundPolling()
+  if (_batchResumeTimer) { clearTimeout(_batchResumeTimer); _batchResumeTimer = null }
+
   loading.value = true
   errors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
   obErrors.value = { overview: '', analytics: '', calls: '', transcripts: '', invoices: '' }
@@ -1212,6 +1247,7 @@ async function loadAll() {
 
   loading.value = false
   if (hasOutbound.value) loadOutbound()
+  startInboundPolling()   // begin 60s silent inbound refresh
 }
 
 function filterHourly(data) {
@@ -1241,6 +1277,10 @@ async function reloadAnalytics() {
 watch(selectedRange, () => { reloadAnalytics() })
 watch(outboundRange, () => { reloadObAnalytics() })
 onMounted(() => { loadAll() })
+onUnmounted(() => {
+  stopInboundPolling()
+  if (_batchResumeTimer) clearTimeout(_batchResumeTimer)
+})
 
 function fmtNumber(value)     { return Number(value || 0).toLocaleString('en-US', { maximumFractionDigits: 1 }) }
 function money(value)         { return Number(value || 0).toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }
@@ -1423,6 +1463,11 @@ function mcHandleDrop(e) { mcIsDragging.value = false; const f = e.dataTransfer.
 async function mcSubmitContacts() {
   if (!mcCanSubmit.value) return
   mcSubmitState.value = 'submitting'; mcSubmitMessage.value = ''
+
+  // Pause the 60s inbound refresh while the batch is running
+  stopInboundPolling()
+  if (_batchResumeTimer) { clearTimeout(_batchResumeTimer); _batchResumeTimer = null }
+
   try {
     const tid = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ''
     const payload = mcValidContacts.value.map(c => ({ phoneNumber: c.phoneNumber, firstName: c.firstName, lastName: c.lastName }))
@@ -1437,9 +1482,19 @@ async function mcSubmitContacts() {
     mcSubmitMessage.value = data?.retell?.batch_call_id
       ? `Retell batch created: ${data.retell.batch_call_id}`
       : 'Contacts sent to Retell AI.'
+
+    // After 2 min: refresh outbound call data once, then resume inbound polling
+    _batchResumeTimer = setTimeout(async () => {
+      _batchResumeTimer = null
+      if (hasOutbound.value) await loadOutbound()
+      startInboundPolling()
+    }, BATCH_PAUSE_MS)
+
   } catch (e) {
     mcSubmitState.value = 'error'
     mcSubmitMessage.value = e?.message || 'Unable to submit contacts.'
+    // Batch didn't go through — resume polling immediately
+    startInboundPolling()
   }
 }
 </script>

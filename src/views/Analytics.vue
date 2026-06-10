@@ -508,7 +508,7 @@
                   <tbody>
                     <tr v-for="call in filteredObCalls" :key="call.id" @click="openObTranscript(call)" class="call-row">
                       <td>{{ fmtDateTime(call.timestamp || call.date) }}</td>
-                      <td class="font-mono">{{ fmtPhone(call.from) }}</td>
+                      <td class="font-mono">{{ fmtPhone(call.to || call.from) }}</td>
                       <td>{{ fmtDurationMin(call.duration_min || 0) }}</td>
                       <td><span :class="['badge', statusBadge(call.status)]">{{ displayStatus(call.status) }}</span></td>
                       <td><span :class="['badge', sentimentBadge(call.sentiment)]">{{ call.sentiment || 'Neutral' }}</span></td>
@@ -1036,8 +1036,8 @@ const filteredObCalls = computed(() => {
   const q = obCallSearch.value.trim().toLowerCase()
   return q
     ? obCalls.value.filter(call => {
-        const date = fmtDateTime(call.timestamp || call.date).toLowerCase()
-        const phone = fmtPhone(call.from).toLowerCase()
+        const date  = fmtDateTime(call.timestamp || call.date).toLowerCase()
+        const phone = fmtPhone(call.to || call.from).toLowerCase()
         return date.includes(q) || phone.includes(q)
       })
     : obCalls.value

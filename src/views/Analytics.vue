@@ -1454,10 +1454,11 @@ function mcParseCsv(text) {
     const rn = idx + 2
     const vals = mcSplitCsvLine(line)
     const phoneDisplay = String(vals[colIdx.phoneDisplay] || '').trim()
-    const phone = String(vals[colIdx.phoneNumber] || '').trim().replace(/[\s().-]/g, '')
+    const rawPhone = String(vals[colIdx.phoneNumber] || '').trim().replace(/[\s().-]/g, '')
     const firstName = vals[colIdx.firstName]?.trim() || ''
     const lastName  = vals[colIdx.lastName]?.trim()  || ''
-    if (!phone && !firstName && !lastName) { errs.push({ rowNumber: rn, message: 'No contact data found.' }); return }
+    if (!rawPhone && !firstName && !lastName) return
+    const phone = rawPhone ? mcNormalizePhone(rawPhone) : ''
     const isValid = Boolean(phone) && /^\+[1-9]\d{6,14}$/.test(phone)
     if (!phone) errs.push({ rowNumber: rn, message: 'phone_number is required.' })
     else if (!isValid) errs.push({ rowNumber: rn, message: 'phone_number must be E.164 format, e.g. +14165551234.' })

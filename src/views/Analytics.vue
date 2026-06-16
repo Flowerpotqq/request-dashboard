@@ -1316,7 +1316,9 @@ function fmtDurationMin(durationMin) {
 }
 function fmtPhone(value) {
   const digits = String(value || '').replace(/\D/g, '')
-  if (digits.length === 10) return `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6)}`
+  if (digits.length === 10) return `+1${digits}`
+  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`
+  if (digits.length > 6) return `+${digits}`
   return String(value || '-')
 }
 function displayStatus(status) {
@@ -1360,7 +1362,8 @@ function obCallName(item) {
   const full = item?.contactName || item?.contact_name || item?.callerName ||
     item?.name || item?.caller_name ||
     [item?.contact_first_name || item?.first_name, item?.contact_last_name || item?.last_name].filter(Boolean).join(' ')
-  return String(full || '').trim()
+  const trimmed = String(full || '').trim()
+  return trimmed.toLowerCase() === 'unknown' ? '' : trimmed
 }
 
 function filterObHourly(data) {
@@ -1414,6 +1417,15 @@ async function reloadObAnalytics() {
 // ── Make a Call helpers ──────────────────────────────────────────────────────
 function mcNormalizeHeader(v) {
   return String(v || '').trim().toLowerCase().replace(/[\s-]+/g, ' ').replace(/_/g, ' ')
+}
+function mcNormalizePhone(raw) {
+  const s = String(raw || '').trim()
+  if (/^\+[1-9]\d{6,14}$/.test(s)) return s              // already E.164
+  const digits = s.replace(/\D/g, '')
+  if (digits.length === 10) return `+1${digits}`           // North American 10-digit
+  if (digits.length === 11 && digits[0] === '1') return `+${digits}` // NA with country code
+  if (digits.length >= 7)  return `+${digits}`             // best-effort international
+  return s                                                 // give up, let validation fail
 }
 function mcSplitCsvLine(line) {
   const values = []; let current = '', inQuotes = false

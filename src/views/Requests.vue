@@ -341,14 +341,9 @@ function formatAppointmentType(value) {
 function formatPhone(value) {
   if (!value) return '-'
   const digits = String(value).replace(/\D/g, '')
-  const normalized = digits.length === 11 && digits.startsWith('1')
-    ? digits.slice(1)
-    : digits
-
-  if (normalized.length === 10) {
-    return `${normalized.slice(0, 3)}-${normalized.slice(3, 6)}-${normalized.slice(6)}`
-  }
-
+  if (digits.length === 10) return `+1${digits}`
+  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`
+  if (digits.length > 6) return `+${digits}`
   return String(value).trim()
 }
 </script>

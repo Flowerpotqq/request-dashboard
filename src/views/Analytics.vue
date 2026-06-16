@@ -660,7 +660,7 @@
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
                   </svg>
                   <span class="mc-upload-title">Drop CSV here or browse</span>
-                  <span class="mc-upload-hint">Required headers: phone number, first name, last name</span>
+                  <span class="mc-upload-hint">Required headers: phone number, patient_first_name, patient_last_name, phone_number</span>
                 </label>
 
                 <div v-if="mcFileName" class="mc-file-row mt-2">
@@ -696,17 +696,18 @@
                 <div class="table-wrap">
                   <table class="nap-table">
                     <thead>
-                      <tr><th>Phone Number</th><th>First Name</th><th>Last Name</th><th>Row</th></tr>
+                      <tr><th>phone number</th><th>patient_first_name</th><th>patient_last_name</th><th>phone_number</th><th>Row</th></tr>
                     </thead>
                     <tbody>
                       <tr v-for="c in mcPreviewContacts" :key="c.rowNumber">
-                        <td class="font-mono" style="font-size:12px">{{ c.phoneNumber }}</td>
+                        <td class="font-mono" style="font-size:12px">{{ c.phoneDisplay }}</td>
                         <td style="font-weight:600">{{ c.firstName || '—' }}</td>
                         <td style="font-weight:600">{{ c.lastName || '—' }}</td>
+                        <td class="font-mono" style="font-size:12px">{{ c.phoneNumber }}</td>
                         <td style="font-size:12px;color:var(--c-text-3)">{{ c.rowNumber }}</td>
                       </tr>
                       <tr v-if="mcPreviewContacts.length === 0">
-                        <td colspan="4" class="empty-cell">No valid contacts to preview yet.</td>
+                        <td colspan="5" class="empty-cell">No valid contacts to preview yet.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -824,9 +825,10 @@ const obTxSearch = ref('')
 // ── Make a Call state ────────────────────────────────────────────────────────
 const MC_PREVIEW_LIMIT = 25
 const MC_REQUIRED_COLUMNS = {
-  phoneNumber: ['phone number', 'phone', 'phone_number', 'phonenumber', 'number'],
-  firstName:   ['first name',  'firstname',  'first_name',  'first'],
-  lastName:    ['last name',   'lastname',   'last_name',   'last'],
+  phoneDisplay: ['phone number'],
+  firstName:    ['patient_first_name'],
+  lastName:     ['patient_last_name'],
+  phoneNumber:  ['phone_number'],
 }
 const mcFileInputRef  = ref(null)
 const mcFileName      = ref('')
@@ -1439,14 +1441,15 @@ function mcParseCsv(text) {
   lines.slice(1).forEach((line, idx) => {
     const rn = idx + 2
     const vals = mcSplitCsvLine(line)
+    const phoneDisplay = String(vals[colIdx.phoneDisplay] || '').trim()
     const phone = String(vals[colIdx.phoneNumber] || '').trim().replace(/[\s().-]/g, '')
     const firstName = vals[colIdx.firstName]?.trim() || ''
     const lastName  = vals[colIdx.lastName]?.trim()  || ''
     if (!phone && !firstName && !lastName) { errs.push({ rowNumber: rn, message: 'No contact data found.' }); return }
     const isValid = Boolean(phone) && /^\+[1-9]\d{6,14}$/.test(phone)
-    if (!phone) errs.push({ rowNumber: rn, message: 'Phone number is required.' })
-    else if (!isValid) errs.push({ rowNumber: rn, message: 'Phone must be E.164 format, e.g. +14165551234.' })
-    parsed.push({ rowNumber: rn, phoneNumber: phone, firstName, lastName, isValid })
+    if (!phone) errs.push({ rowNumber: rn, message: 'phone_number is required.' })
+    else if (!isValid) errs.push({ rowNumber: rn, message: 'phone_number must be E.164 format, e.g. +14165551234.' })
+    parsed.push({ rowNumber: rn, phoneDisplay, phoneNumber: phone, firstName, lastName, isValid })
   })
   if (parsed.length === 0) throw new Error('CSV has no contact rows.')
   return { rows: lines.length - 1, contacts: parsed, errors: errs }
@@ -1483,7 +1486,7 @@ async function mcSubmitContacts() {
 
   try {
     const tid = tenantId ? `?tenantId=${encodeURIComponent(tenantId)}` : ''
-    const payload = mcValidContacts.value.map(c => ({ phoneNumber: c.phoneNumber, firstName: c.firstName, lastName: c.lastName }))
+    const payload = mcValidContacts.value.map(c => ({ patient_phone: c.phoneNumber, patient_first_name: c.firstName, patient_last_name: c.lastName }))
     const resp = await fetch(`/api/nap/outbound/retell-batch${tid}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },

@@ -196,10 +196,6 @@
                   <div class="quick-stat__label">Inbound Transcripts</div>
                   <div class="quick-stat__val">{{ overview.totalTranscripts ?? '—' }}</div>
                 </div>
-                <div v-if="hasOutbound" class="quick-stat">
-                  <div class="quick-stat__label">Outbound Calls Today</div>
-                  <div class="quick-stat__val">{{ outboundOverview.callsToday ?? '—' }}</div>
-                </div>
               </div>
             </div>
           </div>

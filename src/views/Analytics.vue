@@ -874,7 +874,7 @@ const navSections = computed(() => [
     items: [
       { id: 'call-volume',  label: 'Analytics',        icon: ICONS.activity },
       { id: 'call-logs',    label: 'Call Logs',         icon: ICONS.phone },
-      { id: 'transcripts',  label: 'Transcribed Calls', icon: ICONS.message },
+      { id: 'transcripts',  label: 'Transcripts', icon: ICONS.message },
       { id: 'invoices',     label: 'Invoices',          icon: ICONS.file },
     ],
   },
@@ -1575,6 +1575,9 @@ async function mcSubmitContacts() {
 }
 .a-sidebar__brand-text strong { color: var(--c-teal); font-weight: 900; }
 .a-sidebar--collapsed .a-sidebar__brand-text { opacity: 0; width: 0; }
+.a-sidebar--collapsed .a-sidebar__brand { justify-content: center; }
+.a-sidebar--collapsed .a-sidebar__brand-icon { display: none; }
+.a-sidebar--collapsed .a-sidebar__toggle-btn { margin-left: 0; }
 .a-sidebar__toggle-btn {
   margin-left: auto; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
